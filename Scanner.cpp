@@ -105,6 +105,9 @@ auto scanIdentifierAndKeyword() -> Token {
 
 auto scanOperatorAndPunctuator() -> Token {
   string string;
+  while (isCharType(*current, CharType::OperatorAndPunctuator))
+    string += *current++;
+
   while (string.empty() == false && toKind(string) == Kind::Unknown) {
     string.pop_back();
     current--;

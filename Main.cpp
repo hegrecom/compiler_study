@@ -10,7 +10,7 @@ auto printTokenList(vector<Token>) -> void;
 auto main() -> int {
   string sourceCode = R""""(
         function main() {
-            printLine 'Hello, World!'";
+            printLine 'Hello, World!';
             printLine 1 + 2 * 3;
         }
     )"""";
