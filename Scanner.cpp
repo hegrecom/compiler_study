@@ -61,6 +61,7 @@ auto getCharType(char c) -> CharType {
   if (33 <= c && c <= 47 && c != '\'' || 58 <= c && c <= 64 ||
       91 <= c && c <= 96 && c != '_' || 123 <= c && c <= 126)
     return CharType::OperatorAndPunctuator;
+
   return CharType::Unknown;
 }
 
@@ -73,13 +74,30 @@ auto scanNumberLiteral() -> Token {
     while (isCharType(*current, CharType::NumberLiteral))
       string += *current++;
   }
+
   return Token{Kind::NumberLiteral, string};
+}
+
+auto scanStringLiteral() -> Token {
+  string string;
+  current++;
+  while (isCharType(*current, CharType::StringLiteral))
+    string += *current++;
+  if (*current != '\'') {
+    cout << "문자열의 종료 문자가 없습니다.";
+    exit(1);
+  }
+  current++;
+
+  return Token{Kind::StringLiteral, string};
 }
 
 auto isCharType(char c, CharType type) -> bool {
   switch (type) {
   case CharType::NumberLiteral:
     return '0' <= c && c <= '9';
+  case CharType::StringLiteral:
+    return 32 <= c && c <= 126 && c != '\'';
   default:
     return false;
   }
