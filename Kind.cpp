@@ -1,4 +1,7 @@
 #include "Kind.h"
+#include "Token.h"
+#include <iomanip>
+#include <iostream>
 #include <map>
 #include <string>
 
@@ -56,8 +59,33 @@ static map<string, Kind> stringToKind = {
     {"]", Kind::RightBracket},
 };
 
+static auto kindToString = [] {
+  map<Kind, string> result;
+  for (auto &[key, value] : stringToKind)
+    result[value] = key;
+  return result;
+}();
+
 auto toKind(string string) -> Kind {
   if (stringToKind.count(string))
     return stringToKind.at(string);
   return Kind::Unknown;
+}
+
+auto toString(Kind type) -> string {
+  if (kindToString.count(type))
+    return kindToString.at(type);
+  return "";
+}
+
+auto operator<<(ostream &stream, Token &token) -> ostream & {
+  return stream << setw(12) << left << toString(token.kind) << token.string;
+}
+
+auto printTokenList(vector<Token> tokenList) -> void {
+  cout << setw(12) << left << "KIND"
+       << "STRING" << endl;
+  cout << string(23, '-') << endl;
+  for (auto &token : tokenList)
+    cout << token << endl;
 }

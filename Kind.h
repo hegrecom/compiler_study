@@ -3,6 +3,9 @@
 #include <string>
 
 using std::string;
+using std::vector;
+
+struct Token;
 
 enum class Kind {
   Unknown,
@@ -53,3 +56,4 @@ enum class Kind {
 };
 
 auto toKind(string) -> Kind;
+auto printTokenList(vector<Token>) -> void;
