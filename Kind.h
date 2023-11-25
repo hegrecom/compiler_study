@@ -1,3 +1,9 @@
+#pragma once
+
+#include <string>
+
+using std::string;
+
 enum class Kind {
   Unknown,
   EndOfToken,
@@ -45,3 +51,5 @@ enum class Kind {
   LeftBracket,
   RightBracket,
 };
+
+auto toKind(string) -> Kind;

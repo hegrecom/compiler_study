@@ -92,12 +92,26 @@ auto scanStringLiteral() -> Token {
   return Token{Kind::StringLiteral, string};
 }
 
+auto scanIdentifierAndKeyword() -> Token {
+  string string;
+  while (isCharType(*current, CharType::IdentifierAndKeyword))
+    string += *current++;
+  auto kind = toKind(string);
+  if (kind == Kind::Unknown)
+    kind = Kind::Identifier;
+
+  return Token{kind, string};
+}
+
 auto isCharType(char c, CharType type) -> bool {
   switch (type) {
   case CharType::NumberLiteral:
     return '0' <= c && c <= '9';
   case CharType::StringLiteral:
     return 32 <= c && c <= 126 && c != '\'';
+  case CharType::IdentifierAndKeyword:
+    return 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || c == '_' ||
+           '0' <= c && c <= '9';
   default:
     return false;
   }

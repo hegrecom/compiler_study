@@ -5,7 +5,7 @@
 using namespace std;
 
 static map<string, Kind> stringToKind = {
-    {"#unkown", Kind::Unkown},
+    {"#unkown", Kind::Unknown},
     {"#EndOfToken", Kind::EndOfToken},
 
     {"null", Kind::NullLiteral},
@@ -55,3 +55,9 @@ static map<string, Kind> stringToKind = {
     {"[", Kind::LeftBracket},
     {"]", Kind::RightBracket},
 };
+
+auto toKind(string string) -> Kind {
+  if (stringToKind.count(string))
+    return stringToKind.at(string);
+  return Kind::Unknown;
+}
