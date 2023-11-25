@@ -103,6 +103,20 @@ auto scanIdentifierAndKeyword() -> Token {
   return Token{kind, string};
 }
 
+auto scanOperatorAndPunctuator() -> Token {
+  string string;
+  while (string.empty() == false && toKind(string) == Kind::Unknown) {
+    string.pop_back();
+    current--;
+  }
+  if (string.empty()) {
+    cout << *current << "사용할 수 없는 문자입니다.";
+    exit(1);
+  }
+
+  return Token{toKind(string), string};
+}
+
 auto isCharType(char c, CharType type) -> bool {
   switch (type) {
   case CharType::NumberLiteral:
@@ -112,6 +126,9 @@ auto isCharType(char c, CharType type) -> bool {
   case CharType::IdentifierAndKeyword:
     return 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || c == '_' ||
            '0' <= c && c <= '9';
+  case CharType::OperatorAndPunctuator:
+    return 33 <= c && c <= 47 || 58 <= c && c <= 64 || 91 <= c && c <= 96 ||
+           123 <= c && c <= 126;
   default:
     return false;
   }
