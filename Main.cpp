@@ -12,6 +12,11 @@ auto main() -> int {
         function main() {
             printLine 'Hello, World!';
             printLine 1 + 2 * 3;
+
+            var base2Number = 0b1010;
+            var base8Number = 0o52;
+            var base10Number = 42;
+            var base16Number = 0x2afB13;
         }
     )"""";
   auto tokenList = scan(sourceCode);

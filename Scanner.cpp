@@ -18,6 +18,7 @@ auto scanStringLiteral() -> Token;
 auto scanIdentifierAndKeyword() -> Token;
 auto scanOperatorAndPunctuator() -> Token;
 auto isCharType(char, CharType) -> bool;
+auto isBase16AllowedChar(char) -> bool;
 
 auto scan(string sourceCode) -> vector<Token> {
   vector<Token> result;
@@ -67,11 +68,25 @@ auto getCharType(char c) -> CharType {
 
 auto scanNumberLiteral() -> Token {
   string string;
-  while (isCharType(*current, CharType::NumberLiteral))
+  bool base16 = false;
+
+  if (*current == '0') {
+    string += *current++;
+    if (*current == 'b' || *current == 'o')
+      string += *current++;
+    else if (*current == 'x') {
+      string += *current++;
+      base16 = true;
+    }
+  }
+
+  while (isCharType(*current, CharType::NumberLiteral) ||
+         (base16 && isBase16AllowedChar(*current)))
     string += *current++;
   if (*current == '.') {
     string += *current++;
-    while (isCharType(*current, CharType::NumberLiteral))
+    while (isCharType(*current, CharType::NumberLiteral) ||
+           (base16 && isBase16AllowedChar(*current)))
       string += *current++;
   }
 
@@ -135,4 +150,8 @@ auto isCharType(char c, CharType type) -> bool {
   default:
     return false;
   }
+}
+
+auto isBase16AllowedChar(char c) -> bool {
+  return 'a' <= c && c <= 'f' || 'A' <= c && c <= 'F';
 }
