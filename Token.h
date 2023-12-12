@@ -11,3 +11,4 @@ struct Token {
 };
 
 auto printTokenList(vector<Token>) -> void;
+auto operator<<(ostream &stream, Token &token) -> ostream &;
