@@ -9,3 +9,5 @@ struct Token {
   Kind kind = Kind::Unknown;
   string string;
 };
+
+auto printTokenList(vector<Token>) -> void;

@@ -3,7 +3,6 @@
 #include <string>
 
 using std::string;
-using std::vector;
 
 struct Token;
 
@@ -56,4 +55,4 @@ enum class Kind {
 };
 
 auto toKind(string) -> Kind;
-auto printTokenList(vector<Token>) -> void;
+auto toString(Kind type) -> string;
