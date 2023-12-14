@@ -10,7 +10,7 @@ using std::string;
 using std::vector;
 
 struct Program {
-  vector<struct Fuction *> functions;
+  vector<struct Function *> functions;
 };
 
 struct Statement {};
