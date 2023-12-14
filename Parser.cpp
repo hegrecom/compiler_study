@@ -13,6 +13,9 @@ static auto parseVariable() -> Variable *;
 static auto parseExpression() -> Expression *;
 static auto parseExpressionStatement() -> ExpressionStatement *;
 static auto parseReturn() -> Return *;
+static auto parseFor() -> For *;
+static auto parseBreak() -> Break *;
+static auto parseContinue() -> Continue *;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
 
@@ -81,9 +84,16 @@ auto parseBlock() -> vector<Statement *> {
       break;
     case Kind::Return:
       result.push_back(parseReturn());
+      break;
     case Kind::For:
+      result.push_back(parseFor());
+      break;
     case Kind::Break:
+      result.push_back(parseBreak());
+      break;
     case Kind::Continue:
+      result.push_back(parseContinue());
+      break;
     case Kind::If:
     case Kind::Print:
     case Kind::PrintLine:
@@ -131,6 +141,54 @@ auto parseReturn() -> Return * {
 auto parseExpressionStatement() -> ExpressionStatement * {
   auto result = new ExpressionStatement();
   result->expression = parseExpression();
+  skipCurrent(Kind::Semicolon);
+
+  return result;
+}
+
+auto parseFor() -> For * {
+  auto result = new For();
+  skipCurrent(Kind::For);
+
+  result->variable = new Variable();
+  result->variable->name = current->string;
+  skipCurrent(Kind::Identifier);
+  skipCurrent(Kind::Assignment);
+  result->variable->expression = parseExpression();
+  if (result->variable->expression == nullptr) {
+    cout << "for 문의 초기화 식이 없습니다.";
+    exit(1);
+  }
+  skipCurrent(Kind::Comma);
+  result->condition = parseExpression();
+  if (result->condition == nullptr) {
+    cout << "for 문의 조건식이 없습니다.";
+    exit(1);
+  }
+  skipCurrent(Kind::Comma);
+  result->expression = parseExpression();
+  if (result->expression == nullptr) {
+    cout << "for 문의 증감식이 없습니다.";
+    exit(1);
+  }
+  skipCurrent(Kind::LeftBrace);
+  result->block = parseBlock();
+  skipCurrent(Kind::RightBrace);
+
+  return result;
+}
+
+auto parseBreak() -> Break * {
+  auto result = new Break();
+  skipCurrent(Kind::Break);
+  skipCurrent(Kind::Semicolon);
+
+  return result;
+}
+
+auto parseContinue() -> Continue * {
+  auto result = new Continue();
+  skipCurrent(Kind::Continue);
   skipCurrent(Kind::Semicolon);
 
   return result;
