@@ -11,6 +11,7 @@ static auto parseFunction() -> Function *;
 static auto parseBlock() -> vector<Statement *>;
 static auto parseVariable() -> Variable *;
 static auto parseExpression() -> Expression *;
+static auto parseReturn() -> Return *;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
 
@@ -77,6 +78,14 @@ auto parseBlock() -> vector<Statement *> {
     case Kind::Variable:
       result.push_back(parseVariable());
       break;
+    case Kind::Return:
+      result.push_back(parseReturn());
+    case Kind::For:
+    case Kind::Break:
+    case Kind::Continue:
+    case Kind::If:
+    case Kind::Print:
+    case Kind::PrintLine:
     case Kind::EndOfToken:
       cout << *current << " 잘못된 구문입니다.";
       exit(1);
@@ -95,6 +104,21 @@ auto parseVariable() -> Variable * {
 
   skipCurrent(Kind::Assignment);
   result->expression = parseExpression();
+
+  skipCurrent(Kind::Semicolon);
+
+  return result;
+}
+
+auto parseReturn() -> Return * {
+  auto result = new Return();
+  skipCurrent(Kind::Return);
+
+  result->expression = parseExpression();
+  if (result->expression == nullptr) {
+    cout << "return 문에 식이 없습니다.";
+    exit(1);
+  }
 
   skipCurrent(Kind::Semicolon);
 
