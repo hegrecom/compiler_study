@@ -9,6 +9,8 @@ static vector<Token>::iterator current;
 
 static auto parseFunction() -> Function *;
 static auto parseBlock() -> vector<Statement *>;
+static auto parseVariable() -> Variable *;
+static auto parseExpression() -> Expression *;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
 
@@ -69,5 +71,34 @@ auto skipCurrentIf(Kind kind) -> bool {
 }
 
 auto parseBlock() -> vector<Statement *> {
-  return *(new vector<Statement *>());
+  vector<Statement *> result;
+  while (current->kind != Kind::RightBrace) {
+    switch (current->kind) {
+    case Kind::Variable:
+      result.push_back(parseVariable());
+      break;
+    case Kind::EndOfToken:
+      cout << *current << " 잘못된 구문입니다.";
+      exit(1);
+    }
+  }
+
+  return result;
 }
+
+auto parseVariable() -> Variable * {
+  auto result = new Variable();
+  skipCurrent(Kind::Variable);
+
+  result->name = current->string;
+  skipCurrent(Kind::Identifier);
+
+  skipCurrent(Kind::Assignment);
+  result->expression = parseExpression();
+
+  skipCurrent(Kind::Semicolon);
+
+  return result;
+}
+
+auto parseExpression() -> Expression * { return nullptr; }
