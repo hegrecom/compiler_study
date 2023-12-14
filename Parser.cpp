@@ -16,6 +16,8 @@ static auto parseReturn() -> Return *;
 static auto parseFor() -> For *;
 static auto parseBreak() -> Break *;
 static auto parseContinue() -> Continue *;
+static auto parseIf() -> If *;
+static auto parsePrint() -> Print *;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
 
@@ -95,8 +97,12 @@ auto parseBlock() -> vector<Statement *> {
       result.push_back(parseContinue());
       break;
     case Kind::If:
+      result.push_back(parseIf());
+      break;
     case Kind::Print:
     case Kind::PrintLine:
+      result.push_back(parsePrint());
+      break;
     case Kind::EndOfToken:
       cout << *current << " 잘못된 구문입니다.";
       exit(1);
@@ -190,6 +196,36 @@ auto parseContinue() -> Continue * {
   auto result = new Continue();
   skipCurrent(Kind::Continue);
   skipCurrent(Kind::Semicolon);
+
+  return result;
+}
+
+auto parseIf() -> If * {
+  auto result = new If();
+  skipCurrent(Kind::If);
+
+  do {
+    auto condition = parseExpression();
+    if (condition == nullptr) {
+      cout << "if 문의 조건식이 없습니다.";
+      exit(1);
+    }
+    result->conditions.push_back(condition);
+    skipCurrent(Kind::LeftBrace);
+    result->blocks.push_back(parseBlock());
+    skipCurrent(Kind::RightBrace);
+  } while (skipCurrentIf(Kind::Elif));
+  if (skipCurrentIf(Kind::Else)) {
+    skipCurrent(Kind::LeftBrace);
+    result->else_block = parseBlock();
+    skipCurrent(Kind::RightBrace);
+  }
+
+  return result;
+}
+
+auto parsePrint() -> Print * {
+  auto result = new Print();
 
   return result;
 }
