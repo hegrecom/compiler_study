@@ -46,7 +46,7 @@ struct Continue : Statement {};
 struct If : Statement {
   vector<Expression *> conditions;
   vector<vector<Statement *>> blocks;
-  vector<Statement *> else_block;
+  vector<Statement *> elseBlock;
 };
 
 struct Print : Statement {

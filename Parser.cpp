@@ -18,6 +18,7 @@ static auto parseBreak() -> Break *;
 static auto parseContinue() -> Continue *;
 static auto parseIf() -> If *;
 static auto parsePrint() -> Print *;
+static auto skipCurrent() -> void;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
 
@@ -59,6 +60,8 @@ auto parseFunction() -> Function * {
 
   return result;
 }
+
+auto skipCurrent() -> void { current++; }
 
 auto skipCurrent(Kind kind) -> void {
   if (current->kind != kind) {
@@ -217,7 +220,7 @@ auto parseIf() -> If * {
   } while (skipCurrentIf(Kind::Elif));
   if (skipCurrentIf(Kind::Else)) {
     skipCurrent(Kind::LeftBrace);
-    result->else_block = parseBlock();
+    result->elseBlock = parseBlock();
     skipCurrent(Kind::RightBrace);
   }
 
@@ -226,6 +229,13 @@ auto parseIf() -> If * {
 
 auto parsePrint() -> Print * {
   auto result = new Print();
+  result->lineFeed = current->kind == Kind::PrintLine;
+  skipCurrent();
+  if (current->kind != Kind::Semicolon) {
+    do
+      result->arguments.push_back(parseExpression());
+    while (skipCurrentIf(Kind::Comma));
+  }
 
   return result;
 }
