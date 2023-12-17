@@ -18,6 +18,8 @@ static auto parseBreak() -> Break *;
 static auto parseContinue() -> Continue *;
 static auto parseIf() -> If *;
 static auto parsePrint() -> Print *;
+static auto parseAssignment() -> Expression *;
+static auto parseOr() -> Expression *;
 static auto skipCurrent() -> void;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
@@ -240,4 +242,36 @@ auto parsePrint() -> Print * {
   return result;
 }
 
-auto parseExpression() -> Expression * { return nullptr; }
+auto parseExpression() -> Expression * {
+  auto result = parseAssignment();
+
+  return result;
+}
+
+auto parseAssignment() -> Expression * {
+  auto result = parseOr();
+
+  if (current->kind != Kind::Assignment)
+    return result;
+  skipCurrent(Kind::Assignment);
+
+  if (auto getVariable = dynamic_cast<GetVariable *>(result)) {
+    auto result = new SetVariable();
+    result->name = getVariable->name;
+    result->value = parseAssignment();
+    return result;
+  }
+
+  if (auto getElement = dynamic_cast<GetElement *>(result)) {
+    auto result = new SetElement();
+    result->sub = getElement->sub;
+    result->index = getElement->index;
+    result->value = parseAssignment();
+    return result;
+  }
+
+  cout << "잘못된 대입 연산 식입니다.";
+  exit(1);
+}
+
+auto parseOr() -> Expression * { return nullptr; }
