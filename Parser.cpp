@@ -36,6 +36,8 @@ static auto parseListLiteral() -> Expression *;
 static auto parseMapLiteral() -> Expression *;
 static auto parseInnerExpression() -> Expression *;
 static auto parsePostfix(Expression *) -> Expression *;
+static auto parseCall(Expression *) -> Expression *;
+static auto parseElement(Expression *) -> Expression *;
 static auto skipCurrent() -> void;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
@@ -489,4 +491,41 @@ auto parseInnerExpression() -> Expression * {
   return result;
 }
 
-auto parsePostfix(Expression *sub) -> Expression * { return nullptr; }
+auto parsePostfix(Expression *sub) -> Expression * {
+  while (true) {
+    switch (current->kind) {
+    case Kind::LeftParen:
+      sub = parseCall(sub);
+      break;
+    case Kind::LeftBracket:
+      sub = parseElement(sub);
+      break;
+    default:
+      return sub;
+    }
+  }
+}
+
+auto parseCall(Expression *sub) -> Expression * {
+  auto result = new Call();
+  result->sub = sub;
+  skipCurrent(Kind::LeftParen);
+  if (current->kind != Kind::RightParen) {
+    do
+      result->arguments.push_back(parseExpression());
+    while (skipCurrentIf(Kind::Comma));
+  }
+  skipCurrent(Kind::RightParen);
+
+  return result;
+}
+
+auto parseElement(Expression *sub) -> Expression * {
+  auto result = new GetElement();
+  result->sub = sub;
+  skipCurrent(Kind::LeftBracket);
+  result->index = parseExpression();
+  skipCurrent(Kind::RightBracket);
+
+  return result;
+}
