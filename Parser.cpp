@@ -25,6 +25,7 @@ static auto parseAnd() -> Expression *;
 static auto parseRelational() -> Expression *;
 static auto parseArithmetic1() -> Expression *;
 static auto parseArithmetic2() -> Expression *;
+static auto parseUnary() -> Expression *;
 static auto skipCurrent() -> void;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
@@ -322,6 +323,34 @@ auto parseRelational() -> Expression * {
   return result;
 }
 
-auto parseArithmetic1() -> Expression * { return nullptr; }
+auto parseArithmetic1() -> Expression * {
+  set<Kind> operators = {Kind::Add, Kind::Subtract};
 
-auto parseArithmetic2() -> Expression * { return nullptr; }
+  auto result = parseArithmetic2();
+  while (operators.count(current->kind)) {
+    auto temp = new Arithmetic();
+    temp->kind = current->kind;
+    temp->lhs = result;
+    temp->rhs = parseArithmetic2();
+    result = temp;
+  }
+
+  return result;
+}
+
+auto parseArithmetic2() -> Expression * {
+  set<Kind> operators = {Kind::Multiply, Kind::Divide, Kind::Modulo};
+
+  auto result = parseUnary();
+  while (operators.count(current->kind)) {
+    auto temp = new Arithmetic();
+    temp->kind = current->kind;
+    temp->lhs = result;
+    temp->rhs = parseUnary();
+    result = temp;
+  }
+
+  return result;
+}
+
+auto parseUnary() -> Expression * { return nullptr; }
