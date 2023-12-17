@@ -20,6 +20,7 @@ static auto parseIf() -> If *;
 static auto parsePrint() -> Print *;
 static auto parseAssignment() -> Expression *;
 static auto parseOr() -> Expression *;
+static auto parseAnd() -> Expression *;
 static auto skipCurrent() -> void;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
@@ -274,4 +275,17 @@ auto parseAssignment() -> Expression * {
   exit(1);
 }
 
-auto parseOr() -> Expression * { return nullptr; }
+auto parseOr() -> Expression * {
+  auto result = parseAnd();
+
+  while (skipCurrentIf(Kind::LogicalOr)) {
+    auto temp = new Or();
+    temp->lhs = result;
+    temp->rhs = parseAnd();
+    result = temp;
+  }
+
+  return result;
+}
+
+auto parseAnd() -> Expression * { return nullptr; }
