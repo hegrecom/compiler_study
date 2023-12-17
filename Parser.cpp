@@ -2,6 +2,7 @@
 #include "Node.h"
 #include "Token.h"
 #include <iostream>
+#include <set>
 
 using std::cout;
 
@@ -22,6 +23,8 @@ static auto parseAssignment() -> Expression *;
 static auto parseOr() -> Expression *;
 static auto parseAnd() -> Expression *;
 static auto parseRelational() -> Expression *;
+static auto parseArithmetic1() -> Expression *;
+static auto parseArithmetic2() -> Expression *;
 static auto skipCurrent() -> void;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
@@ -302,4 +305,23 @@ auto parseAnd() -> Expression * {
   return result;
 }
 
-auto parseRelational() -> Expression * { return nullptr; }
+auto parseRelational() -> Expression * {
+  set<Kind> operators = {Kind::Equal,       Kind::NotEqual,
+                         Kind::LessThan,    Kind::GreaterThan,
+                         Kind::LessOrEqual, Kind::GreaterOrEqual};
+
+  auto result = parseArithmetic1();
+  while (operators.count(current->kind)) {
+    auto temp = new Relational();
+    temp->kind = current->kind;
+    temp->lhs = result;
+    temp->rhs = parseArithmetic1();
+    result = temp;
+  }
+
+  return result;
+}
+
+auto parseArithmetic1() -> Expression * { return nullptr; }
+
+auto parseArithmetic2() -> Expression * { return nullptr; }
