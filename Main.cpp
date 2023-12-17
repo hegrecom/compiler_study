@@ -1,4 +1,5 @@
 #include "Kind.h"
+#include "Parser.h"
 #include "Token.h"
 #include <iomanip>
 #include <iostream>
@@ -20,7 +21,8 @@ auto main() -> int {
         }
     )"""";
   auto tokenList = scan(sourceCode);
-  printTokenList(tokenList);
+  auto syntaxTree = parse(tokenList);
+  // printSyntaxTree(syntaxTree);
 
   return 0;
 }

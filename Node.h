@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kind.h"
+#include "Kind.h"
 #include <map>
 #include <string>
 #include <vector>

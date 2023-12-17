@@ -1,6 +1,4 @@
-#include "Kind.h"
-#include "Node.h"
-#include "Token.h"
+#include "Parser.h"
 #include <iostream>
 #include <set>
 
