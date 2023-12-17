@@ -21,6 +21,7 @@ static auto parsePrint() -> Print *;
 static auto parseAssignment() -> Expression *;
 static auto parseOr() -> Expression *;
 static auto parseAnd() -> Expression *;
+static auto parseRelational() -> Expression *;
 static auto skipCurrent() -> void;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
@@ -288,4 +289,17 @@ auto parseOr() -> Expression * {
   return result;
 }
 
-auto parseAnd() -> Expression * { return nullptr; }
+auto parseAnd() -> Expression * {
+  auto result = parseRelational();
+
+  while (skipCurrentIf(Kind::LogicalAnd)) {
+    auto temp = new And();
+    temp->lhs = result;
+    temp->rhs = parseRelational();
+    result = temp;
+  }
+
+  return result;
+}
+
+auto parseRelational() -> Expression * { return nullptr; }
