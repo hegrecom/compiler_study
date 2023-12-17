@@ -27,6 +27,15 @@ static auto parseArithmetic1() -> Expression *;
 static auto parseArithmetic2() -> Expression *;
 static auto parseUnary() -> Expression *;
 static auto parseOperand() -> Expression *;
+static auto parseNullLiteral() -> Expression *;
+static auto parseBooleanLiteral() -> Expression *;
+static auto parseNumberLiteral() -> Expression *;
+static auto parseStringLiteral() -> Expression *;
+static auto parseIdentifier() -> Expression *;
+static auto parseListLiteral() -> Expression *;
+static auto parseMapLiteral() -> Expression *;
+static auto parseInnerExpression() -> Expression *;
+static auto parsePostfix(Expression *) -> Expression *;
 static auto skipCurrent() -> void;
 static auto skipCurrent(Kind kind) -> void;
 static auto skipCurrentIf(Kind kind) -> bool;
@@ -368,4 +377,116 @@ auto parseUnary() -> Expression * {
   return parseOperand();
 }
 
-auto parseOperand() -> Expression * { return nullptr; }
+auto parseOperand() -> Expression * {
+  Expression *result = nullptr;
+  switch (current->kind) {
+  case Kind::NullLiteral:
+    result = parseNullLiteral();
+    break;
+  case Kind::TrueLiteral:
+  case Kind::FalseLiteral:
+    result = parseBooleanLiteral();
+    break;
+  case Kind::NumberLiteral:
+    result = parseNumberLiteral();
+    break;
+  case Kind::StringLiteral:
+    result = parseStringLiteral();
+    break;
+  case Kind::LeftBracket:
+    result = parseListLiteral();
+    break;
+  case Kind::LeftBrace:
+    result = parseMapLiteral();
+    break;
+  case Kind::Identifier:
+    result = parseIdentifier();
+    break;
+  case Kind::LeftParen:
+    result = parseInnerExpression();
+    break;
+  default:
+    cout << "잘못된 식입니다.";
+    exit(1);
+  }
+  return parsePostfix(result);
+}
+
+auto parseNullLiteral() -> Expression * {
+  skipCurrent(Kind::NullLiteral);
+  auto result = new NullLiteral();
+
+  return result;
+}
+
+auto parseBooleanLiteral() -> Expression * {
+  auto result = new BooleanLiteral();
+  result->value = current->kind == Kind::TrueLiteral;
+  skipCurrent();
+
+  return result;
+}
+
+auto parseNumberLiteral() -> Expression * {
+  auto result = new NumberLiteral();
+  result->value = stod(current->string);
+  skipCurrent(Kind::NumberLiteral);
+
+  return result;
+}
+
+auto parseStringLiteral() -> Expression * {
+  auto result = new StringLiteral();
+  result->value = current->string;
+  skipCurrent(Kind::StringLiteral);
+
+  return result;
+}
+
+auto parseListLiteral() -> Expression * {
+  auto result = new ArrayLiteral();
+  skipCurrent(Kind::LeftBracket);
+  if (current->kind != Kind::RightBracket) {
+    do
+      result->values.push_back(parseExpression());
+    while (skipCurrentIf(Kind::Comma));
+  }
+  skipCurrent(Kind::RightBracket);
+
+  return result;
+}
+
+auto parseMapLiteral() -> Expression * {
+  auto result = new MapLiteral();
+
+  skipCurrent(Kind::LeftBrace);
+  if (current->kind != Kind::RightBrace) {
+    do {
+      auto name = current->string;
+      skipCurrent(Kind::StringLiteral);
+      skipCurrent(Kind::Colon);
+      auto value = parseExpression();
+      result->values[name] = value;
+    } while (skipCurrentIf(Kind::Comma));
+  }
+
+  return result;
+}
+
+auto parseIdentifier() -> Expression * {
+  auto result = new GetVariable();
+  result->name = current->string;
+  skipCurrent(Kind::Identifier);
+
+  return result;
+}
+
+auto parseInnerExpression() -> Expression * {
+  skipCurrent(Kind::LeftParen);
+  auto result = parseExpression();
+  skipCurrent(Kind::RightParen);
+
+  return result;
+}
+
+auto parsePostfix(Expression *sub) -> Expression * { return nullptr; }

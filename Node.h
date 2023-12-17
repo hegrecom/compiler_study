@@ -155,7 +155,7 @@ struct StringLiteral : Expression {
 };
 
 struct ArrayLiteral : Expression {
-  vector<Expression *> vaules;
+  vector<Expression *> values;
   auto print(int) -> void;
 };
 
