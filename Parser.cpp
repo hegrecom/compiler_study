@@ -327,6 +327,7 @@ auto parseRelational() -> Expression * {
   while (operators.count(current->kind)) {
     auto temp = new Relational();
     temp->kind = current->kind;
+    skipCurrent();
     temp->lhs = result;
     temp->rhs = parseArithmetic1();
     result = temp;
