@@ -163,3 +163,5 @@ struct MapLiteral : Expression {
   map<string, Expression *> values;
   auto print(int) -> void;
 };
+
+auto printSyntaxTree(Program *) -> void;
