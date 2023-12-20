@@ -29,13 +29,28 @@ auto main() -> int {
               printLine 'a == b';
             } elif a != 8 {
               printLine 'a == 8';
-            } elif {
-              b > 200
+            } elif b > 200 {
+              printLine 'b > 200';
             } elif a <= 800 {
               printLine 'a <= 800';
             } else {
               printLine 'a != b';
             }
+
+            var nullLiteral = null;
+
+            for i = 0, i < 10, i = i + 1 {
+              print i;
+              for j = 10, j > 0, j = j - 1 {
+                printLine j;
+                continue;
+              }
+              if i > 5 {
+                break;
+              }
+            }
+
+            return 3 + 4;
         }
     )"""";
   auto tokenList = scan(sourceCode);
