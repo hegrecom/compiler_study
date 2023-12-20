@@ -343,6 +343,7 @@ auto parseArithmetic1() -> Expression * {
   while (operators.count(current->kind)) {
     auto temp = new Arithmetic();
     temp->kind = current->kind;
+    skipCurrent();
     temp->lhs = result;
     temp->rhs = parseArithmetic2();
     result = temp;
@@ -358,6 +359,7 @@ auto parseArithmetic2() -> Expression * {
   while (operators.count(current->kind)) {
     auto temp = new Arithmetic();
     temp->kind = current->kind;
+    skipCurrent();
     temp->lhs = result;
     temp->rhs = parseUnary();
     result = temp;
