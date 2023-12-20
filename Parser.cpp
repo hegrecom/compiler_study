@@ -102,7 +102,6 @@ auto skipCurrentIf(Kind kind) -> bool {
 auto parseBlock() -> vector<Statement *> {
   vector<Statement *> result;
   while (current->kind != Kind::RightBrace) {
-    cout << "현재:" << toString(current->kind) << endl;
     switch (current->kind) {
     case Kind::Variable:
       result.push_back(parseVariable());
