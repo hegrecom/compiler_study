@@ -11,7 +11,8 @@ auto operator<<(ostream &stream, any &value) -> ostream & {
   if (isString(value))
     stream << toString(value);
   else
-    stream << value.type().name();
+    stream << "Printing the following data types are not supported: "
+           << value.type().name();
 
   return stream;
 }

@@ -73,7 +73,7 @@ auto BooleanLiteral::interpret() -> any { return nullptr; }
 
 auto NumberLiteral::interpret() -> any { return nullptr; }
 
-auto StringLiteral::interpret() -> any { return nullptr; }
+auto StringLiteral::interpret() -> any { return value; }
 
 auto ArrayLiteral::interpret() -> any { return nullptr; }
 
