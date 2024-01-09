@@ -15,6 +15,12 @@ auto main() -> int {
             printLine 'Hello, World!';
             printLine 1 + 2 * 3 * 8 / 4;
             printLine 99 % 8;
+            printLine true and false;
+            printLine false and true;
+            printLine true and true;
+            printLine true or true;
+            printLine false or true;
+            printLine false or false;
 
             var base2Number = 0b1010;
             var base8Number = 0o52;

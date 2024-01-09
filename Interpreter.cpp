@@ -47,9 +47,13 @@ auto Print::interpret() -> void {
 
 auto ExpressionStatement::interpret() -> void {}
 
-auto Or::interpret() -> any { return nullptr; }
+auto Or::interpret() -> any {
+  return isTrue(lhs->interpret()) ? true : rhs->interpret();
+}
 
-auto And::interpret() -> any { return nullptr; }
+auto And::interpret() -> any {
+  return isFalse(lhs->interpret()) ? false : rhs->interpret();
+}
 
 auto Relational::interpret() -> any { return nullptr; }
 
