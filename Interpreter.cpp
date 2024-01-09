@@ -1,4 +1,7 @@
+#include "Interpreter.h"
 #include "Node.h"
+
+auto interpret(Program *program) -> void {}
 
 auto Function::interpret() -> void {}
 

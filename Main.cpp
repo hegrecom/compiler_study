@@ -1,3 +1,4 @@
+#include "Interpreter.h"
 #include "Kind.h"
 #include "Parser.h"
 #include "Token.h"
@@ -57,6 +58,8 @@ auto main() -> int {
   printTokenList(tokenList);
   auto syntaxTree = parse(tokenList);
   printSyntaxTree(syntaxTree);
+
+  interpret(syntaxTree);
 
   return 0;
 }
