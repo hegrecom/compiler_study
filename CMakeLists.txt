@@ -17,4 +17,5 @@ add_executable(
   Scanner.cpp
   Parser.cpp
   Printer.cpp
+  DataType.cpp
   Interpreter.cpp)

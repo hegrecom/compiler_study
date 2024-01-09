@@ -1,9 +1,27 @@
 #include "Interpreter.h"
+#include "DataType.h"
 #include "Node.h"
+#include <iostream>
 
-auto interpret(Program *program) -> void {}
+using std::cout;
+using std::endl;
 
-auto Function::interpret() -> void {}
+static map<string, Function *> functionTable;
+
+auto interpret(Program *program) -> void {
+  for (auto &node : program->functions)
+    functionTable[node->name] = node;
+
+  if (functionTable["main"] == nullptr)
+    return;
+
+  functionTable["main"]->interpret();
+}
+
+auto Function::interpret() -> void {
+  for (auto &node : block)
+    node->interpret();
+}
 
 auto Return::interpret() -> void {}
 
@@ -17,7 +35,15 @@ auto Continue::interpret() -> void {}
 
 auto If::interpret() -> void {}
 
-auto Print::interpret() -> void {}
+auto Print::interpret() -> void {
+  for (auto &node : arguments) {
+    auto value = node->interpret();
+    cout << value;
+
+    if (lineFeed)
+      cout << endl;
+  }
+}
 
 auto ExpressionStatement::interpret() -> void {}
 
