@@ -13,7 +13,8 @@ auto main() -> int {
   string sourceCode = R""""(
         function main() {
             printLine 'Hello, World!';
-            printLine 1 + 2 * 3;
+            printLine 1 + 2 * 3 * 8 / 4;
+            printLine 99 % 8;
 
             var base2Number = 0b1010;
             var base8Number = 0o52;

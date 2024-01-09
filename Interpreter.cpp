@@ -53,7 +53,23 @@ auto And::interpret() -> any { return nullptr; }
 
 auto Relational::interpret() -> any { return nullptr; }
 
-auto Arithmetic::interpret() -> any { return nullptr; }
+auto Arithmetic::interpret() -> any {
+  auto lValue = lhs->interpret();
+  auto rValue = rhs->interpret();
+
+  if (kind == Kind::Add && isNumber(lValue) && isNumber(rValue))
+    return toNumber(lValue) + toNumber(rValue);
+  if (kind == Kind::Subtract && isNumber(lValue) && isNumber(rValue))
+    return toNumber(lValue) - toNumber(rValue);
+  if (kind == Kind::Multiply && isNumber(lValue) && isNumber(rValue))
+    return toNumber(lValue) * toNumber(rValue);
+  if (kind == Kind::Divide && isNumber(lValue) && isNumber(rValue))
+    return toNumber(rValue) == 0 ? 0.0 : toNumber(lValue) / toNumber(rValue);
+  if (kind == Kind::Modulo && isNumber(lValue) && isNumber(rValue))
+    return toNumber(rValue) == 0 ? toNumber(lValue)
+                                 : fmod(toNumber(lValue), toNumber(rValue));
+  return 0.0;
+}
 
 auto Unary::interpret() -> any { return nullptr; }
 
@@ -69,9 +85,9 @@ auto SetVariable::interpret() -> any { return nullptr; }
 
 auto NullLiteral::interpret() -> any { return nullptr; }
 
-auto BooleanLiteral::interpret() -> any { return nullptr; }
+auto BooleanLiteral::interpret() -> any { return value; }
 
-auto NumberLiteral::interpret() -> any { return nullptr; }
+auto NumberLiteral::interpret() -> any { return value; }
 
 auto StringLiteral::interpret() -> any { return value; }
 
