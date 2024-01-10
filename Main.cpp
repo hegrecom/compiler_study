@@ -84,6 +84,11 @@ auto main() -> int {
             printLine sqrt(16);
             printLine [1, 2, 4];
 
+            var arr = ['first', 'second', 'third'];
+            printLine arr[1];
+            arr[1] = 'updated second';
+            printLine arr[1];
+
             return 3 + 4;
         }
 

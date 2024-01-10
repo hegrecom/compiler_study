@@ -43,6 +43,22 @@ auto toArray(any value) -> shared_ptr<vector<any>> {
   return any_cast<shared_ptr<vector<any>>>(value);
 }
 
+auto getValueOfArray(any object, any index) -> any {
+  auto i = static_cast<int>(toNumber(index));
+  if (i >= 0 && i < toArray(object)->size())
+    return toArray(object)->at(i);
+
+  return nullptr;
+}
+
+auto setValueOfArray(any object, any index, any value) -> any {
+  auto i = static_cast<int>(toNumber(index));
+  if (i >= 0 && i < toArray(object)->size())
+    toArray(object)->at(i) = value;
+
+  return value;
+}
+
 auto operator<<(ostream &stream, any &value) -> ostream & {
   if (isString(value))
     stream << toString(value);

@@ -42,4 +42,8 @@ auto isArray(any value) -> bool;
 
 auto toArray(any value) -> shared_ptr<vector<any>>;
 
+auto getValueOfArray(any object, any index) -> any;
+
+auto setValueOfArray(any object, any index, any value) -> any;
+
 auto operator<<(ostream &stream, any &value) -> ostream &;

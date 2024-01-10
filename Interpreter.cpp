@@ -188,9 +188,24 @@ auto Call::interpret() -> any {
   return nullptr;
 }
 
-auto GetElement::interpret() -> any { return nullptr; }
+auto GetElement::interpret() -> any {
+  auto object = sub->interpret();
+  auto index_ = index->interpret();
+  if (isArray(object) && isNumber(index_))
+    return getValueOfArray(object, index_);
 
-auto SetElement::interpret() -> any { return nullptr; }
+  return nullptr;
+}
+
+auto SetElement::interpret() -> any {
+  auto object = sub->interpret();
+  auto index_ = index->interpret();
+  auto value_ = value->interpret();
+  if (isArray(object) && isNumber(index_))
+    return setValueOfArray(object, index_, value_);
+
+  return nullptr;
+}
 
 auto GetVariable::interpret() -> any {
   for (auto &variables : local.back()) {
