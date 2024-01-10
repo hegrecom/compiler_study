@@ -82,6 +82,7 @@ auto main() -> int {
             haHaHa();
             printLine 'add 99 + 1: ', add(99, 1);
             printLine sqrt(16);
+            printLine [1, 2, 4];
 
             return 3 + 4;
         }

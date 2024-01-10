@@ -6,12 +6,14 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <memory>
 #include <vector>
 
 using std::cout;
 using std::endl;
 using std::function;
 using std::list;
+using std::make_shared;
 
 static map<string, Function *> functionTable;
 static list<list<map<string, any>>> local;
@@ -226,6 +228,11 @@ auto NumberLiteral::interpret() -> any { return value; }
 
 auto StringLiteral::interpret() -> any { return value; }
 
-auto ArrayLiteral::interpret() -> any { return nullptr; }
+auto ArrayLiteral::interpret() -> any {
+  auto result = make_shared<vector<any>>();
+  for (auto &node : values)
+    result->push_back(node->interpret());
+  return result;
+}
 
 auto MapLiteral::interpret() -> any { return nullptr; }

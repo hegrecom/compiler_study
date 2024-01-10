@@ -4,11 +4,13 @@
 #include <any>
 #include <functional>
 #include <iomanip>
+#include <memory>
 #include <ostream>
 
 using std::any;
 using std::function;
 using std::ostream;
+using std::shared_ptr;
 using std::string;
 using std::vector;
 
@@ -35,5 +37,9 @@ auto toFunction(any value) -> Function *;
 auto isBuiltinFunction(any value) -> bool;
 
 auto toBuiltinFunction(any value) -> function<any(vector<any>)>;
+
+auto isArray(any value) -> bool;
+
+auto toArray(any value) -> shared_ptr<vector<any>>;
 
 auto operator<<(ostream &stream, any &value) -> ostream &;

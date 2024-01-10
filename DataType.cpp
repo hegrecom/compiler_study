@@ -35,6 +35,14 @@ auto toBuiltinFunction(any value) -> function<any(vector<any>)> {
   return any_cast<function<any(vector<any>)>>(value);
 }
 
+auto isArray(any value) -> bool {
+  return value.type() == typeid(shared_ptr<vector<any>>);
+}
+
+auto toArray(any value) -> shared_ptr<vector<any>> {
+  return any_cast<shared_ptr<vector<any>>>(value);
+}
+
 auto operator<<(ostream &stream, any &value) -> ostream & {
   if (isString(value))
     stream << toString(value);
@@ -45,6 +53,14 @@ auto operator<<(ostream &stream, any &value) -> ostream & {
       stream << "true";
     else
       stream << "false";
+  }
+  if (isArray(value)) {
+    stream << "[ ";
+    auto temp = toArray(value);
+    for (auto &element : *temp) {
+      stream << element << " ";
+    }
+    stream << "]";
   }
 
   return stream;
