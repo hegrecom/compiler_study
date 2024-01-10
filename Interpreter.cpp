@@ -39,7 +39,20 @@ auto Variable::interpret() -> void {
   local.back().front()[name] = expression->interpret();
 }
 
-auto For::interpret() -> void {}
+auto For::interpret() -> void {
+  local.back().emplace_front();
+  variable->interpret();
+
+  while (true) {
+    auto result = condition->interpret();
+    if (isTrue(result) == false)
+      break;
+    for (auto &node : block)
+      node->interpret();
+    expression->interpret();
+  }
+  local.back().pop_front();
+}
 
 auto Break::interpret() -> void {}
 
@@ -67,7 +80,25 @@ auto And::interpret() -> any {
   return isFalse(lhs->interpret()) ? false : rhs->interpret();
 }
 
-auto Relational::interpret() -> any { return nullptr; }
+auto Relational::interpret() -> any {
+  auto lValue = lhs->interpret();
+  auto rValue = rhs->interpret();
+
+  if (kind == Kind::Equal && isNumber(lValue) && isNumber(rValue))
+    return toNumber(lValue) == toNumber(rValue);
+  if (kind == Kind::NotEqual && isNumber(lValue) && isNumber(rValue))
+    return toNumber(lValue) != toNumber(rValue);
+  if (kind == Kind::LessThan && isNumber(lValue) && isNumber(rValue))
+    return toNumber(lValue) < toNumber(rValue);
+  if (kind == Kind::GreaterThan && isNumber(lValue) && isNumber(rValue))
+    return toNumber(lValue) > toNumber(rValue);
+  if (kind == Kind::LessOrEqual && isNumber(lValue) && isNumber(rValue))
+    return toNumber(lValue) <= toNumber(rValue);
+  if (kind == Kind::GreaterOrEqual && isNumber(lValue) && isNumber(rValue))
+    return toNumber(lValue) >= toNumber(rValue);
+
+  return false;
+}
 
 auto Arithmetic::interpret() -> any {
   auto lValue = lhs->interpret();

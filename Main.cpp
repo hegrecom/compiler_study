@@ -56,7 +56,7 @@ auto main() -> int {
             var nullLiteral = null;
 
             for i = 0, i < 10, i = i + 1 {
-              print i;
+              printLine 'i: ', i;
               for j = 10, j > 0, j = j - 1 {
                 printLine j;
                 continue;
