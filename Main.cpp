@@ -88,6 +88,9 @@ auto main() -> int {
             printLine arr[1];
             arr[1] = 'updated second';
             printLine arr[1];
+            var minus = -5;
+            printLine 'minus to minus: ', -minus;
+            printLine 'plus number: ', +99;
 
             return 3 + 4;
         }

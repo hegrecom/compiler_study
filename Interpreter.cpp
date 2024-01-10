@@ -157,7 +157,16 @@ auto Arithmetic::interpret() -> any {
   return 0.0;
 }
 
-auto Unary::interpret() -> any { return nullptr; }
+auto Unary::interpret() -> any {
+  auto value = sub->interpret();
+
+  if (kind == Kind::Add && isNumber(value))
+    return toNumber(value);
+  if (kind == Kind::Subtract && isNumber(value))
+    return -toNumber(value);
+
+  return nullptr;
+}
 
 auto Call::interpret() -> any {
   auto value = sub->interpret();
