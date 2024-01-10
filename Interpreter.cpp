@@ -14,6 +14,7 @@ static list<list<map<string, any>>> local;
 static map<string, any> global;
 
 struct ContinueException {};
+struct BreakException {};
 
 auto interpret(Program *program) -> void {
   for (auto &node : program->functions)
@@ -53,13 +54,15 @@ auto For::interpret() -> void {
       for (auto &node : block)
         node->interpret();
     } catch (ContinueException e) {
+    } catch (BreakException e) {
+      break;
     }
     expression->interpret();
   }
   local.back().pop_front();
 }
 
-auto Break::interpret() -> void {}
+auto Break::interpret() -> void { throw BreakException(); }
 
 auto Continue::interpret() -> void { throw ContinueException(); }
 
