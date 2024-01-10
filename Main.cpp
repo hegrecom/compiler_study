@@ -79,8 +79,13 @@ auto main() -> int {
                 printLine i;
               }
             }
+            haHaHa();
 
             return 3 + 4;
+        }
+
+        function haHaHa() {
+          printLine 'HaHaHa';
         }
     )"""";
   auto tokenList = scan(sourceCode);

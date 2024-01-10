@@ -21,6 +21,12 @@ auto isFalse(any value) -> bool {
   return isBoolean(value) && !toBoolean(value);
 }
 
+auto isFunction(any value) -> bool {
+  return value.type() == typeid(Function *);
+}
+
+auto toFunction(any value) -> Function * { return any_cast<Function *>(value); }
+
 auto operator<<(ostream &stream, any &value) -> ostream & {
   if (isString(value))
     stream << toString(value);

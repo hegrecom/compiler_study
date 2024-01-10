@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Node.h"
 #include <any>
 #include <ostream>
 
@@ -22,5 +23,9 @@ auto toBoolean(any value) -> bool;
 auto isTrue(any value) -> bool;
 
 auto isFalse(any value) -> bool;
+
+auto isFunction(any value) -> bool;
+
+auto toFunction(any value) -> Function *;
 
 auto operator<<(ostream &stream, any &value) -> ostream &;

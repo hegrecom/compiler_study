@@ -147,7 +147,15 @@ auto Arithmetic::interpret() -> any {
 
 auto Unary::interpret() -> any { return nullptr; }
 
-auto Call::interpret() -> any { return nullptr; }
+auto Call::interpret() -> any {
+  auto value = sub->interpret();
+  if (isFunction(value) == false)
+    return nullptr;
+  local.emplace_back().emplace_front();
+  toFunction(value)->interpret();
+  local.pop_back();
+  return nullptr;
+}
 
 auto GetElement::interpret() -> any { return nullptr; }
 
@@ -161,6 +169,9 @@ auto GetVariable::interpret() -> any {
 
   if (global.count(name))
     return global[name];
+
+  if (functionTable.count(name))
+    return functionTable[name];
 
   return nullptr;
 }
