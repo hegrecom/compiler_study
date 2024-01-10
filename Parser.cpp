@@ -474,6 +474,7 @@ auto parseMapLiteral() -> Expression * {
       result->values[name] = value;
     } while (skipCurrentIf(Kind::Comma));
   }
+  skipCurrent(Kind::RightBrace);
 
   return result;
 }

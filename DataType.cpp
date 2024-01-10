@@ -59,6 +59,26 @@ auto setValueOfArray(any object, any index, any value) -> any {
   return value;
 }
 
+auto isMap(any value) -> bool {
+  return value.type() == typeid(shared_ptr<map<string, any>>);
+}
+
+auto toMap(any value) -> shared_ptr<map<string, any>> {
+  return any_cast<shared_ptr<map<string, any>>>(value);
+}
+
+auto getValueOfMap(any object, string key) -> any {
+  if (toMap(object)->count(key))
+    return toMap(object)->at(key);
+
+  return nullptr;
+}
+
+auto setValueOfMap(any object, string key, any value) -> any {
+  (*toMap(object))[key] = value;
+  return value;
+}
+
 auto operator<<(ostream &stream, any &value) -> ostream & {
   if (isString(value))
     stream << toString(value);
@@ -77,6 +97,14 @@ auto operator<<(ostream &stream, any &value) -> ostream & {
       stream << element << " ";
     }
     stream << "]";
+  }
+  if (isMap(value)) {
+    stream << "{ ";
+    auto temp = toMap(value);
+    for (auto &element : *temp) {
+      stream << element.first << ": " << element.second << " ";
+    }
+    stream << "}";
   }
 
   return stream;

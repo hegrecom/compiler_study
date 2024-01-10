@@ -92,6 +92,19 @@ auto main() -> int {
             printLine 'minus to minus: ', -minus;
             printLine 'plus number: ', +99;
 
+            var map = {
+              'first': 1,
+              'second': 2
+            };
+            printLine map;
+            printLine map['first'];
+            map['third'] = 3;
+            map['first'] = 99;
+            printLine map['first'];
+            printLine map['third'];
+            printLine map;
+
+
             return 3 + 4;
         }
 

@@ -46,4 +46,12 @@ auto getValueOfArray(any object, any index) -> any;
 
 auto setValueOfArray(any object, any index, any value) -> any;
 
+auto isMap(any value) -> bool;
+
+auto toMap(any value) -> shared_ptr<map<string, any>>;
+
+auto getValueOfMap(any object, string key) -> any;
+
+auto setValueOfMap(any object, string key, any value) -> any;
+
 auto operator<<(ostream &stream, any &value) -> ostream &;

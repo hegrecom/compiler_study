@@ -202,6 +202,8 @@ auto GetElement::interpret() -> any {
   auto index_ = index->interpret();
   if (isArray(object) && isNumber(index_))
     return getValueOfArray(object, index_);
+  if (isMap(object) && isString(index_))
+    return getValueOfMap(object, toString(index_));
 
   return nullptr;
 }
@@ -212,6 +214,8 @@ auto SetElement::interpret() -> any {
   auto value_ = value->interpret();
   if (isArray(object) && isNumber(index_))
     return setValueOfArray(object, index_, value_);
+  if (isMap(object) && isString(index_))
+    return setValueOfMap(object, toString(index_), value_);
 
   return nullptr;
 }
@@ -259,4 +263,10 @@ auto ArrayLiteral::interpret() -> any {
   return result;
 }
 
-auto MapLiteral::interpret() -> any { return nullptr; }
+auto MapLiteral::interpret() -> any {
+  auto result = make_shared<map<string, any>>();
+  for (auto &[key, value] : values)
+    result->insert_or_assign(key, value->interpret());
+
+  return result;
+}
