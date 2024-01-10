@@ -66,6 +66,18 @@ auto main() -> int {
               }
             }
 
+            for i = 0, i < 5, i = i + 1 {
+              if i == 1 {
+                printLine 'one';
+              } elif i == 2 {
+                printLine 'two';
+              } elif i == 3 {
+                printLine 'three';
+              } else {
+                printLine i;
+              }
+            }
+
             return 3 + 4;
         }
     )"""";

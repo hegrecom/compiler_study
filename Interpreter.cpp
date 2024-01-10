@@ -58,7 +58,26 @@ auto Break::interpret() -> void {}
 
 auto Continue::interpret() -> void {}
 
-auto If::interpret() -> void {}
+auto If::interpret() -> void {
+  for (auto i = 0; i < conditions.size(); i++) {
+    auto result = conditions[i]->interpret();
+    if (isTrue(result) == false)
+      continue;
+    local.back().emplace_front();
+    for (auto &node : blocks[i])
+      node->interpret();
+    local.back().pop_front();
+    return;
+  }
+
+  if (elseBlock.empty())
+    return;
+
+  local.back().emplace_front();
+  for (auto &node : elseBlock)
+    node->interpret();
+  local.back().pop_front();
+}
 
 auto Print::interpret() -> void {
   for (auto &node : arguments) {
