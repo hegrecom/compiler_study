@@ -13,6 +13,8 @@ static map<string, Function *> functionTable;
 static list<list<map<string, any>>> local;
 static map<string, any> global;
 
+struct ContinueException {};
+
 auto interpret(Program *program) -> void {
   for (auto &node : program->functions)
     functionTable[node->name] = node;
@@ -47,8 +49,11 @@ auto For::interpret() -> void {
     auto result = condition->interpret();
     if (isTrue(result) == false)
       break;
-    for (auto &node : block)
-      node->interpret();
+    try {
+      for (auto &node : block)
+        node->interpret();
+    } catch (ContinueException e) {
+    }
     expression->interpret();
   }
   local.back().pop_front();
@@ -56,7 +61,7 @@ auto For::interpret() -> void {
 
 auto Break::interpret() -> void {}
 
-auto Continue::interpret() -> void {}
+auto Continue::interpret() -> void { throw ContinueException(); }
 
 auto If::interpret() -> void {
   for (auto i = 0; i < conditions.size(); i++) {

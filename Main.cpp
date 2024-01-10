@@ -58,8 +58,10 @@ auto main() -> int {
             for i = 0, i < 10, i = i + 1 {
               printLine 'i: ', i;
               for j = 10, j > 0, j = j - 1 {
+                if j == 3 {
+                  continue;
+                }
                 printLine j;
-                continue;
               }
               if i > 5 {
                 break;
