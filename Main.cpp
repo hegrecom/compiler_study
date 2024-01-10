@@ -80,12 +80,17 @@ auto main() -> int {
               }
             }
             haHaHa();
+            printLine 'add 99 + 1: ', add(99, 1);
 
             return 3 + 4;
         }
 
         function haHaHa() {
           printLine 'HaHaHa';
+        }
+
+        function add(a, b) {
+          return a + b;
         }
     )"""";
   auto tokenList = scan(sourceCode);

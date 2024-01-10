@@ -4,6 +4,7 @@
 #include <any>
 #include <iostream>
 #include <list>
+#include <map>
 
 using std::cout;
 using std::endl;
@@ -15,6 +16,9 @@ static map<string, any> global;
 
 struct ContinueException {};
 struct BreakException {};
+struct ReturnException {
+  any result;
+};
 
 auto interpret(Program *program) -> void {
   for (auto &node : program->functions)
@@ -23,12 +27,12 @@ auto interpret(Program *program) -> void {
   if (functionTable["main"] == nullptr)
     return;
 
-  /* try { */
-  local.emplace_back().emplace_front();
-  functionTable["main"]->interpret();
-  /* } catch (ReturnException e) { */
-  /*   local.pop_back(); */
-  /* } */
+  try {
+    local.emplace_back().emplace_front();
+    functionTable["main"]->interpret();
+  } catch (ReturnException e) {
+    local.pop_back();
+  }
 }
 
 auto Function::interpret() -> void {
@@ -36,7 +40,9 @@ auto Function::interpret() -> void {
     node->interpret();
 }
 
-auto Return::interpret() -> void {}
+auto Return::interpret() -> void {
+  throw ReturnException{expression->interpret()};
+}
 
 auto Variable::interpret() -> void {
   local.back().front()[name] = expression->interpret();
@@ -151,8 +157,19 @@ auto Call::interpret() -> any {
   auto value = sub->interpret();
   if (isFunction(value) == false)
     return nullptr;
-  local.emplace_back().emplace_front();
-  toFunction(value)->interpret();
+  map<string, any> parameters;
+  for (auto i = 0; i < arguments.size(); i++) {
+    auto name = toFunction(value)->parameters[i];
+    parameters[name] = arguments[i]->interpret();
+  }
+
+  local.emplace_back().push_front(parameters);
+  try {
+    toFunction(value)->interpret();
+  } catch (ReturnException exception) {
+    local.pop_back();
+    return exception.result;
+  }
   local.pop_back();
   return nullptr;
 }
