@@ -18,4 +18,5 @@ add_executable(
   Parser.cpp
   Printer.cpp
   DataType.cpp
+  BuiltinFunctions.cpp
   Interpreter.cpp)

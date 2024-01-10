@@ -2,17 +2,21 @@
 #include "DataType.h"
 #include "Node.h"
 #include <any>
+#include <functional>
 #include <iostream>
 #include <list>
 #include <map>
+#include <vector>
 
 using std::cout;
 using std::endl;
+using std::function;
 using std::list;
 
 static map<string, Function *> functionTable;
 static list<list<map<string, any>>> local;
 static map<string, any> global;
+extern map<string, function<any(vector<any>)>> builtinFunctionTable;
 
 struct ContinueException {};
 struct BreakException {};
@@ -155,6 +159,14 @@ auto Unary::interpret() -> any { return nullptr; }
 
 auto Call::interpret() -> any {
   auto value = sub->interpret();
+  if (isBuiltinFunction(value)) {
+    vector<any> values;
+
+    for (auto i = 0; i < arguments.size(); i++)
+      values.push_back(arguments[i]->interpret());
+    return toBuiltinFunction(value)(values);
+  }
+
   if (isFunction(value) == false)
     return nullptr;
   map<string, any> parameters;
@@ -189,6 +201,9 @@ auto GetVariable::interpret() -> any {
 
   if (functionTable.count(name))
     return functionTable[name];
+
+  if (builtinFunctionTable.count(name))
+    return builtinFunctionTable[name];
 
   return nullptr;
 }

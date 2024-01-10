@@ -1,5 +1,5 @@
 #include "DataType.h"
-#include <iomanip>
+#include <vector>
 
 using std::any_cast;
 
@@ -26,6 +26,14 @@ auto isFunction(any value) -> bool {
 }
 
 auto toFunction(any value) -> Function * { return any_cast<Function *>(value); }
+
+auto isBuiltinFunction(any value) -> bool {
+  return value.type() == typeid(function<any(vector<any>)>);
+};
+
+auto toBuiltinFunction(any value) -> function<any(vector<any>)> {
+  return any_cast<function<any(vector<any>)>>(value);
+}
 
 auto operator<<(ostream &stream, any &value) -> ostream & {
   if (isString(value))
