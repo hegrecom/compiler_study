@@ -22,6 +22,14 @@ auto main() -> int {
             printLine false or true;
             printLine false or false;
 
+            global = 4;
+            var local = 13;
+            printLine 'global = ', global;
+            printLine 'local = ', local;
+            global = local = 8;
+            printLine 'updated global = ', global;
+            printLine 'updated local = ', local;
+
             var base2Number = 0b1010;
             var base8Number = 0o52;
             var base10Number = 42;
@@ -31,7 +39,7 @@ auto main() -> int {
             printLine b;
 
             var a = b = 99;
-            printLine a, b;
+            printLine a, ', ', b;
 
             if a == b {
               printLine 'a == b';

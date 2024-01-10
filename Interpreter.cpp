@@ -1,12 +1,17 @@
 #include "Interpreter.h"
 #include "DataType.h"
 #include "Node.h"
+#include <any>
 #include <iostream>
+#include <list>
 
 using std::cout;
 using std::endl;
+using std::list;
 
 static map<string, Function *> functionTable;
+static list<list<map<string, any>>> local;
+static map<string, any> global;
 
 auto interpret(Program *program) -> void {
   for (auto &node : program->functions)
@@ -15,7 +20,12 @@ auto interpret(Program *program) -> void {
   if (functionTable["main"] == nullptr)
     return;
 
+  /* try { */
+  local.emplace_back().emplace_front();
   functionTable["main"]->interpret();
+  /* } catch (ReturnException e) { */
+  /*   local.pop_back(); */
+  /* } */
 }
 
 auto Function::interpret() -> void {
@@ -25,7 +35,9 @@ auto Function::interpret() -> void {
 
 auto Return::interpret() -> void {}
 
-auto Variable::interpret() -> void {}
+auto Variable::interpret() -> void {
+  local.back().front()[name] = expression->interpret();
+}
 
 auto For::interpret() -> void {}
 
@@ -39,13 +51,13 @@ auto Print::interpret() -> void {
   for (auto &node : arguments) {
     auto value = node->interpret();
     cout << value;
-
-    if (lineFeed)
-      cout << endl;
   }
+
+  if (lineFeed)
+    cout << endl;
 }
 
-auto ExpressionStatement::interpret() -> void {}
+auto ExpressionStatement::interpret() -> void { expression->interpret(); }
 
 auto Or::interpret() -> any {
   return isTrue(lhs->interpret()) ? true : rhs->interpret();
@@ -83,9 +95,27 @@ auto GetElement::interpret() -> any { return nullptr; }
 
 auto SetElement::interpret() -> any { return nullptr; }
 
-auto GetVariable::interpret() -> any { return nullptr; }
+auto GetVariable::interpret() -> any {
+  for (auto &variables : local.back()) {
+    if (variables.count(name))
+      return variables[name];
+  }
 
-auto SetVariable::interpret() -> any { return nullptr; }
+  if (global.count(name))
+    return global[name];
+
+  return nullptr;
+}
+
+auto SetVariable::interpret() -> any {
+  for (auto &variables : local.back()) {
+    if (variables.count(name)) {
+      return variables[name] = value->interpret();
+    }
+  }
+
+  return global[name] = value->interpret();
+}
 
 auto NullLiteral::interpret() -> any { return nullptr; }
 
