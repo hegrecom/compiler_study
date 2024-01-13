@@ -1,4 +1,9 @@
-#include "Node.h"
+#include "Generator.h"
+
+auto generate(Program *program) -> tuple<vector<Code>, map<string, size_t>> {
+  return tuple<vector<Code>, map<string, size_t>>{vector<Code>{},
+                                                  map<string, size_t>{}};
+}
 
 auto Function::generate() -> void {}
 

@@ -20,4 +20,5 @@ add_executable(
   Printer.cpp
   DataType.cpp
   Instruction.cpp
+  Code.cpp
   Generator.cpp)
