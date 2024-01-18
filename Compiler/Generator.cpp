@@ -31,7 +31,12 @@ auto writeCode(Instruction instruction, any operand) -> size_t {
   return codeList.size() - 1;
 }
 
-auto Function::generate() -> void {}
+auto Function::generate() -> void {
+  functionTable[name] = codeList.size();
+  for (auto &node : block)
+    node->generate();
+  writeCode(Instruction::Return);
+}
 
 auto Return::generate() -> void {}
 
