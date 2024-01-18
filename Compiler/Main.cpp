@@ -14,6 +14,7 @@ auto main() -> int {
   string sourceCode = R""""(
         function main() {
             printLine 'Hello, World!';
+            printLine 88;
             printLine 1 + 2 * 3 * 8 / 4;
             printLine 99 % 8;
             printLine true and false;

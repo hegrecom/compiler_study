@@ -51,6 +51,8 @@ auto Continue::generate() -> void {}
 auto If::generate() -> void {}
 
 auto Print::generate() -> void {
+  for (auto i = arguments.size(); i > 0; i--)
+    arguments[i - 1]->generate();
   writeCode(Instruction::Print, arguments.size());
 
   if (lineFeed)
