@@ -32,6 +32,10 @@ auto writeCode(Instruction instruction, any operand) -> size_t {
   return codeList.size() - 1;
 }
 
+auto patchAddress(size_t codeIndex) -> void {
+  codeList[codeIndex].operand = codeList.size();
+}
+
 auto Function::generate() -> void {
   functionTable[name] = codeList.size();
   for (auto &node : block)
@@ -65,9 +69,19 @@ auto ExpressionStatement::generate() -> void {
   writeCode(Instruction::PopOperand);
 }
 
-auto Or::generate() -> void {}
+auto Or::generate() -> void {
+  lhs->generate();
+  auto logicalOr = writeCode(Instruction::LogicalOr);
+  rhs->generate();
+  patchAddress(logicalOr);
+}
 
-auto And::generate() -> void {}
+auto And::generate() -> void {
+  lhs->generate();
+  auto logicalAnd = writeCode(Instruction::LogicalAnd);
+  rhs->generate();
+  patchAddress(logicalAnd);
+}
 
 auto Relational::generate() -> void {}
 
