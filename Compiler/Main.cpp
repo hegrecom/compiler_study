@@ -1,4 +1,3 @@
-/* #include "Interpreter.h" */
 #include "Code.h"
 #include "Generator.h"
 #include "Kind.h"
@@ -123,7 +122,6 @@ auto main() -> int {
   auto syntaxTree = parse(tokenList);
   printSyntaxTree(syntaxTree);
 
-  /* interpret(syntaxTree); */
   auto objectCode = generate(syntaxTree);
   printObjectCode(objectCode);
 

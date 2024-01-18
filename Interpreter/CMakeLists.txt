@@ -11,7 +11,7 @@ set(CMAKE_CURRENT_BINARY_DIR ${CMAKE_BINARY_DIR})
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 add_executable(
-  compiler
+  interpreter
   Main.cpp
   Kind.cpp
   Token.cpp

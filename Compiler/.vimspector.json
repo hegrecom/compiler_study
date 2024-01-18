@@ -1,0 +1,17 @@
+{
+  "configurations": {
+    "Launch": {
+      "adapter": "vscode-cpptools",
+      "filetypes": ["cpp"],
+      "configuration": {
+        "request": "launch",
+        "program": "${workspaceRoot}/build/compiler",
+        "cwd": "${workspaceRoot}",
+        "args": [],
+        "stopAtEntry": false,
+        "externalConsole": false,
+        "MIMode": "lldb"
+      }
+    }
+  }
+}

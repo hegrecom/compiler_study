@@ -1,8 +1,34 @@
 #include "Generator.h"
+#include "Code.h"
+#include "Instruction.h"
+#include <any>
+#include <cstddef>
+#include <vector>
+
+static vector<Code> codeList;
+static map<string, size_t> functionTable;
+
+auto writeCode(Instruction) -> size_t;
+auto writeCode(Instruction, any) -> size_t;
 
 auto generate(Program *program) -> tuple<vector<Code>, map<string, size_t>> {
-  return tuple<vector<Code>, map<string, size_t>>{vector<Code>{},
-                                                  map<string, size_t>{}};
+  writeCode(Instruction::GetGlobal, string("main"));
+  writeCode(Instruction::Call, static_cast<size_t>(0));
+  writeCode(Instruction::Exit);
+  for (auto &node : program->functions)
+    node->generate();
+
+  return {codeList, functionTable};
+}
+
+auto writeCode(Instruction instruction) -> size_t {
+  codeList.push_back({instruction});
+  return codeList.size() - 1;
+}
+
+auto writeCode(Instruction instruction, any operand) -> size_t {
+  codeList.push_back({instruction, operand});
+  return codeList.size() - 1;
 }
 
 auto Function::generate() -> void {}

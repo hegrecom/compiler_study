@@ -1,3 +1,8 @@
+#pragma once
+
+#include <string>
+using std::string;
+
 enum class Instruction {
   Exit,
   Call,
@@ -39,3 +44,5 @@ enum class Instruction {
   PushMap,
   PopOperand
 };
+
+auto toString(Instruction) -> string;
