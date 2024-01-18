@@ -79,13 +79,21 @@ auto GetVariable::generate() -> void {}
 
 auto SetVariable::generate() -> void {}
 
-auto NullLiteral::generate() -> void {}
+auto NullLiteral::generate() -> void {
+  writeCode(Instruction::PushNull, nullptr);
+}
 
-auto BooleanLiteral::generate() -> void {}
+auto BooleanLiteral::generate() -> void {
+  writeCode(Instruction::PushBoolean, value);
+}
 
-auto NumberLiteral::generate() -> void {}
+auto NumberLiteral::generate() -> void {
+  writeCode(Instruction::PushNumber, value);
+}
 
-auto StringLiteral::generate() -> void {}
+auto StringLiteral::generate() -> void {
+  writeCode(Instruction::PushString, value);
+}
 
 auto ArrayLiteral::generate() -> void {}
 
