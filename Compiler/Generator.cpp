@@ -1,6 +1,7 @@
 #include "Generator.h"
 #include "Code.h"
 #include "Instruction.h"
+#include "Kind.h"
 #include <any>
 #include <cstddef>
 #include <vector>
@@ -59,7 +60,10 @@ auto Print::generate() -> void {
     writeCode(Instruction::PrintLine);
 }
 
-auto ExpressionStatement::generate() -> void {}
+auto ExpressionStatement::generate() -> void {
+  expression->generate();
+  writeCode(Instruction::PopOperand);
+}
 
 auto Or::generate() -> void {}
 
@@ -67,7 +71,19 @@ auto And::generate() -> void {}
 
 auto Relational::generate() -> void {}
 
-auto Arithmetic::generate() -> void {}
+auto Arithmetic::generate() -> void {
+  map<Kind, Instruction> instructions = {
+      {Kind::Add, Instruction::Add},
+      {Kind::Subtract, Instruction::Subtract},
+      {Kind::Multiply, Instruction::Multiply},
+      {Kind::Divide, Instruction::Divide},
+      {Kind::Modulo, Instruction::Modulo},
+  };
+  lhs->generate();
+  rhs->generate();
+
+  writeCode(instructions[kind]);
+}
 
 auto Unary::generate() -> void {}
 
