@@ -50,7 +50,12 @@ auto Continue::generate() -> void {}
 
 auto If::generate() -> void {}
 
-auto Print::generate() -> void {}
+auto Print::generate() -> void {
+  writeCode(Instruction::Print, arguments.size());
+
+  if (lineFeed)
+    writeCode(Instruction::PrintLine);
+}
 
 auto ExpressionStatement::generate() -> void {}
 
