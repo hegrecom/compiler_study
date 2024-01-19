@@ -156,9 +156,20 @@ auto GetElement::generate() -> void {}
 
 auto SetElement::generate() -> void {}
 
-auto GetVariable::generate() -> void {}
+auto GetVariable::generate() -> void {
+  if (getLocal(name) == SIZE_MAX)
+    writeCode(Instruction::GetGlobal, name);
+  else
+    writeCode(Instruction::GetLocal, getLocal(name));
+}
 
-auto SetVariable::generate() -> void {}
+auto SetVariable::generate() -> void {
+  value->generate();
+  if (getLocal(name) == SIZE_MAX)
+    writeCode(Instruction::SetGlobal, name);
+  else
+    writeCode(Instruction::SetLocal, getLocal(name));
+}
 
 auto NullLiteral::generate() -> void {
   writeCode(Instruction::PushNull, nullptr);
