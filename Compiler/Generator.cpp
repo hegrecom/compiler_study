@@ -61,6 +61,11 @@ auto popBlock() -> void {
   symbolStack.pop_front();
 }
 
+auto pushBlock() -> void {
+  symbolStack.emplace_front();
+  offsetStack.push_back(offsetStack.back());
+}
+
 auto setLocal(string name) -> void {
   symbolStack.front()[name] = offsetStack.back();
   offsetStack.back() += 1;
@@ -96,7 +101,20 @@ auto Variable::generate() -> void {
   writeCode(Instruction::PopOperand);
 }
 
-auto For::generate() -> void {}
+auto For::generate() -> void {
+  pushBlock();
+  variable->generate();
+  auto jumpAddress = codeList.size();
+  condition->generate();
+  auto conditionJump = writeCode(Instruction::ConditionJump);
+  for (auto &node : block)
+    node->generate();
+  expression->generate();
+  writeCode(Instruction::PopOperand);
+  writeCode(Instruction::Jump, jumpAddress);
+  patchAddress(conditionJump);
+  popBlock();
+}
 
 auto Break::generate() -> void {}
 
