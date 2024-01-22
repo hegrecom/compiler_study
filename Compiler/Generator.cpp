@@ -120,7 +120,27 @@ auto Break::generate() -> void {}
 
 auto Continue::generate() -> void {}
 
-auto If::generate() -> void {}
+auto If::generate() -> void {
+  vector<size_t> jumpList;
+  for (auto i = 0; i < conditions.size(); i++) {
+    conditions[i]->generate();
+    auto conditionJump = writeCode(Instruction::ConditionJump);
+    pushBlock();
+    for (auto &node : blocks[i])
+      node->generate();
+    popBlock();
+    jumpList.push_back(writeCode(Instruction::Jump));
+    patchAddress(conditionJump);
+  }
+  if (elseBlock.empty() == false) {
+    pushBlock();
+    for (auto &node : elseBlock)
+      node->generate();
+    popBlock();
+  }
+  for (auto &jump : jumpList)
+    patchAddress(jump);
+}
 
 auto Print::generate() -> void {
   for (auto i = arguments.size(); i > 0; i--)
