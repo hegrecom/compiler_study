@@ -18,6 +18,7 @@ static map<string, size_t> functionTable;
 static list<map<string, size_t>> symbolStack;
 static vector<size_t> offsetStack;
 static size_t localSize;
+static vector<vector<size_t>> continueStack;
 
 auto writeCode(Instruction) -> size_t;
 auto writeCode(Instruction, any) -> size_t;
@@ -102,6 +103,7 @@ auto Variable::generate() -> void {
 }
 
 auto For::generate() -> void {
+  continueStack.emplace_back();
   pushBlock();
   variable->generate();
   auto jumpAddress = codeList.size();
@@ -109,16 +111,25 @@ auto For::generate() -> void {
   auto conditionJump = writeCode(Instruction::ConditionJump);
   for (auto &node : block)
     node->generate();
+  auto continueAddress = codeList.size();
   expression->generate();
   writeCode(Instruction::PopOperand);
   writeCode(Instruction::Jump, jumpAddress);
   patchAddress(conditionJump);
   popBlock();
+  for (auto &jump : continueStack.back())
+    patchOperand(jump, continueAddress);
+  continueStack.pop_back();
 }
 
 auto Break::generate() -> void {}
 
-auto Continue::generate() -> void {}
+auto Continue::generate() -> void {
+  if (continueStack.empty())
+    return;
+  auto jumpCode = writeCode(Instruction::Jump);
+  continueStack.back().push_back(jumpCode);
+}
 
 auto If::generate() -> void {
   vector<size_t> jumpList;
