@@ -225,7 +225,15 @@ auto Arithmetic::generate() -> void {
   writeCode(instructions[kind]);
 }
 
-auto Unary::generate() -> void {}
+auto Unary::generate() -> void {
+  map<Kind, Instruction> instructions = {
+      {Kind::Add, Instruction::Absolute},
+      {Kind::Subtract, Instruction::ReverseSign},
+  };
+  sub->generate();
+
+  writeCode(instructions[kind]);
+}
 
 auto Call::generate() -> void {
   for (auto i = arguments.size(); i > 0; i--)
