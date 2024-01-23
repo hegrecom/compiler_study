@@ -196,7 +196,20 @@ auto And::generate() -> void {
   patchAddress(logicalAnd);
 }
 
-auto Relational::generate() -> void {}
+auto Relational::generate() -> void {
+  map<Kind, Instruction> instructions = {
+      {Kind::LessThan, Instruction::LessThan},
+      {Kind::LessOrEqual, Instruction::LessOrEqual},
+      {Kind::GreaterThan, Instruction::GreaterThan},
+      {Kind::GreaterOrEqual, Instruction::GreaterOrEqual},
+      {Kind::Equal, Instruction::Equal},
+      {Kind::NotEqual, Instruction::NotEqual},
+  };
+  lhs->generate();
+  rhs->generate();
+
+  writeCode(instructions[kind]);
+}
 
 auto Arithmetic::generate() -> void {
   map<Kind, Instruction> instructions = {
