@@ -211,9 +211,18 @@ auto Call::generate() -> void {
   writeCode(Instruction::Call, arguments.size());
 }
 
-auto GetElement::generate() -> void {}
+auto GetElement::generate() -> void {
+  sub->generate();
+  index->generate();
+  writeCode(Instruction::GetElement);
+}
 
-auto SetElement::generate() -> void {}
+auto SetElement::generate() -> void {
+  value->generate();
+  sub->generate();
+  index->generate();
+  writeCode(Instruction::SetElement);
+}
 
 auto GetVariable::generate() -> void {
   if (getLocal(name) == SIZE_MAX)
