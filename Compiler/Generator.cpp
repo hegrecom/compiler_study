@@ -19,6 +19,7 @@ static list<map<string, size_t>> symbolStack;
 static vector<size_t> offsetStack;
 static size_t localSize;
 static vector<vector<size_t>> continueStack;
+static vector<vector<size_t>> breakStack;
 
 auto writeCode(Instruction) -> size_t;
 auto writeCode(Instruction, any) -> size_t;
@@ -108,6 +109,7 @@ auto Variable::generate() -> void {
 }
 
 auto For::generate() -> void {
+  breakStack.emplace_back();
   continueStack.emplace_back();
   pushBlock();
   variable->generate();
@@ -125,9 +127,17 @@ auto For::generate() -> void {
   for (auto &jump : continueStack.back())
     patchOperand(jump, continueAddress);
   continueStack.pop_back();
+  for (auto &jump : breakStack.back())
+    patchOperand(jump, codeList.size());
+  breakStack.pop_back();
 }
 
-auto Break::generate() -> void {}
+auto Break::generate() -> void {
+  if (breakStack.empty())
+    return;
+  auto jumpCode = writeCode(Instruction::Jump);
+  breakStack.back().push_back(jumpCode);
+}
 
 auto Continue::generate() -> void {
   if (continueStack.empty())
