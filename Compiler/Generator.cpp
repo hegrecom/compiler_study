@@ -246,6 +246,15 @@ auto StringLiteral::generate() -> void {
   writeCode(Instruction::PushString, value);
 }
 
-auto ArrayLiteral::generate() -> void {}
+auto ArrayLiteral::generate() -> void {
+  for (auto i = values.size(); i > 0; i--)
+    values[i - 1]->generate();
+  writeCode(Instruction::PushArray, values.size());
+}
 
-auto MapLiteral::generate() -> void {}
+auto MapLiteral::generate() -> void {
+  for (auto &[key, value] : values) {
+    writeCode(Instruction::PushString, key);
+    value->generate();
+  }
+}
