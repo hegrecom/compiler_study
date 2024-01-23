@@ -86,6 +86,8 @@ auto Function::generate() -> void {
   functionTable[name] = codeList.size();
   auto temp = writeCode(Instruction::Alloca);
   initBlock();
+  for (auto &name : parameters)
+    setLocal(name);
   for (auto &node : block)
     node->generate();
   popBlock();
@@ -93,7 +95,10 @@ auto Function::generate() -> void {
   writeCode(Instruction::Return);
 }
 
-auto Return::generate() -> void {}
+auto Return::generate() -> void {
+  expression->generate();
+  writeCode(Instruction::Return);
+}
 
 auto Variable::generate() -> void {
   setLocal(name);
@@ -199,7 +204,12 @@ auto Arithmetic::generate() -> void {
 
 auto Unary::generate() -> void {}
 
-auto Call::generate() -> void {}
+auto Call::generate() -> void {
+  for (auto i = arguments.size(); i > 0; i--)
+    arguments[i - 1]->generate();
+  sub->generate();
+  writeCode(Instruction::Call, arguments.size());
+}
 
 auto GetElement::generate() -> void {}
 
