@@ -1,6 +1,7 @@
 #include "Code.h"
 #include "Generator.h"
 #include "Kind.h"
+#include "Machine.h"
 #include "Parser.h"
 #include "Token.h"
 #include <iomanip>
@@ -122,9 +123,9 @@ auto main() -> int {
   printTokenList(tokenList);
   auto syntaxTree = parse(tokenList);
   printSyntaxTree(syntaxTree);
-
   auto objectCode = generate(syntaxTree);
   printObjectCode(objectCode);
+  execute(objectCode);
 
   return 0;
 }
