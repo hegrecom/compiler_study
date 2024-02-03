@@ -30,11 +30,9 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
   while (true) {
     auto code = codeList[callStack.back().instructionPointer];
     switch (code.instruction) {
-    case Instruction::Alloca: {
-      auto extraSize = toSize(code.operand);
-      auto currentSize = callStack.back().variables.size();
-      callStack.back().variables.resize(currentSize + extraSize);
-      break;
+    case Instruction::Exit: {
+      callStack.pop_back();
+      return;
     }
     case Instruction::Call: {
       auto operand = popOperand();
@@ -52,9 +50,11 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       }
       break;
     }
-    case Instruction::Exit: {
-      callStack.pop_back();
-      return;
+    case Instruction::Alloca: {
+      auto extraSize = toSize(code.operand);
+      auto currentSize = callStack.back().variables.size();
+      callStack.back().variables.resize(currentSize + extraSize);
+      break;
     }
     case Instruction::Return: {
       any result = nullptr;
@@ -63,6 +63,19 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       callStack.pop_back();
       callStack.back().operandStack.push_back(result);
       break;
+    }
+    case Instruction::Jump: {
+      callStack.back().instructionPointer = toSize(code.operand);
+      continue;
+    }
+    case Instruction::ConditionJump: {
+      auto value = popOperand();
+      if (isTrue(value))
+        break;
+      else {
+        callStack.back().instructionPointer = toSize(code.operand);
+        continue;
+      }
     }
     case Instruction::Print: {
       for (auto i = 0; i < toSize(code.operand); i++) {
