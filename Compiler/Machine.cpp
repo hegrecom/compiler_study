@@ -233,6 +233,22 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         pushOperand(false);
       break;
     }
+    case Instruction::Absolute: {
+      auto value = popOperand();
+      if (isNumber(value))
+        pushOperand(abs(toNumber(value)));
+      else
+        pushOperand(0.0);
+      break;
+    }
+    case Instruction::ReverseSign: {
+      auto value = popOperand();
+      if (isNumber(value))
+        pushOperand(-toNumber(value));
+      else
+        pushOperand(0.0);
+      break;
+    }
     case Instruction::GetElement: {
       auto index = popOperand();
       auto object = popOperand();
