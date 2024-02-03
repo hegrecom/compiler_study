@@ -3,8 +3,11 @@
 #include "Instruction.h"
 #include "Kind.h"
 #include <any>
+#include <iostream>
 
 using std::any;
+using std::cout;
+using std::endl;
 using std::get;
 
 struct StackFrame {
@@ -59,14 +62,27 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       callStack.pop_back();
       return;
     }
-    case Instruction::PushNull:
+    case Instruction::Print: {
+      for (auto i = 0; i < toSize(code.operand); i++) {
+        auto value = popOperand();
+        cout << value;
+      }
+      break;
+    }
+    case Instruction::PrintLine: {
+      cout << endl;
+      break;
+    }
+    case Instruction::PushNull: {
       pushOperand(nullptr);
       break;
+    }
     case Instruction::PushBoolean:
     case Instruction::PushNumber:
-    case Instruction::PushString:
+    case Instruction::PushString: {
       pushOperand(code.operand);
       break;
+    }
     }
     callStack.back().instructionPointer++;
   }
