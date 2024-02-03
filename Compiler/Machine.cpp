@@ -326,6 +326,10 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       pushOperand(result);
       break;
     }
+    case Instruction::PopOperand: {
+      popOperand();
+      break;
+    }
     }
     callStack.back().instructionPointer++;
   }
