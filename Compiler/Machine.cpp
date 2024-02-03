@@ -25,6 +25,12 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
   while (true) {
     auto code = codeList[callStack.back().instructionPointer];
     switch (code.instruction) {
+    case Instruction::Alloca: {
+      auto extraSize = toSize(code.operand);
+      auto currentSize = callStack.back().variables.size();
+      callStack.back().variables.resize(currentSize + extraSize);
+      break;
+    }
     case Instruction::Call: {
       auto operand = popOperand();
       if (isSize(operand)) {
