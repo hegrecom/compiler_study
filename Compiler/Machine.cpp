@@ -59,6 +59,14 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       callStack.pop_back();
       return;
     }
+    case Instruction::PushNull:
+      pushOperand(nullptr);
+      break;
+    case Instruction::PushBoolean:
+    case Instruction::PushNumber:
+    case Instruction::PushString:
+      pushOperand(code.operand);
+      break;
     }
     callStack.back().instructionPointer++;
   }
