@@ -143,6 +143,7 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         pushOperand(toNumber(lValue) * toNumber(rValue));
       else
         pushOperand(0.0);
+      break;
     }
     case Instruction::Divide: {
       auto rValue = popOperand();
