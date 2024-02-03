@@ -17,9 +17,11 @@ struct StackFrame {
 };
 
 static vector<StackFrame> callStack;
+static map<string, any> global;
 
 static auto pushOperand(any) -> void;
 static auto popOperand() -> any;
+static auto peekOperand() -> any;
 
 auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
   callStack.emplace_back();
@@ -48,14 +50,6 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       } else {
         pushOperand(nullptr);
       }
-      break;
-    }
-    case Instruction::GetGlobal: {
-      auto name = toString(code.operand);
-      if (functionTable.count(name))
-        pushOperand(functionTable[name]);
-      else
-        pushOperand(nullptr);
       break;
     }
     case Instruction::Exit: {
@@ -148,6 +142,31 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       else
         pushOperand(0.0);
     }
+    case Instruction::GetLocal: {
+      auto index = toSize(code.operand);
+      pushOperand(callStack.back().variables[index]);
+      break;
+    }
+    case Instruction::SetLocal: {
+      auto index = toSize(code.operand);
+      callStack.back().variables[index] = peekOperand();
+      break;
+    }
+    case Instruction::GetGlobal: {
+      auto name = toString(code.operand);
+      if (functionTable.count(name))
+        pushOperand(functionTable[name]);
+      else if (global.count(name))
+        pushOperand(global[name]);
+      else
+        pushOperand(nullptr);
+      break;
+    }
+    case Instruction::SetGlobal: {
+      auto name = toString(code.operand);
+      global[name] = peekOperand();
+      break;
+    }
     case Instruction::PushNull: {
       pushOperand(nullptr);
       break;
@@ -171,4 +190,8 @@ static auto popOperand() -> any {
   auto value = callStack.back().operandStack.back();
   callStack.back().operandStack.pop_back();
   return value;
+}
+
+static auto peekOperand() -> any {
+  return callStack.back().operandStack.back();
 }
