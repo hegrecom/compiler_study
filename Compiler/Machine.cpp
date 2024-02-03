@@ -81,6 +81,45 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       cout << endl;
       break;
     }
+    case Instruction::Add: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) + toNumber(rValue));
+      else if (isString(lValue) && isString(rValue))
+        pushOperand(toString(lValue) + toString(rValue));
+      else
+        pushOperand(0.0);
+      break;
+    }
+    case Instruction::Subtract: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) - toNumber(rValue));
+      else
+        pushOperand(0.0);
+      break;
+    }
+    case Instruction::Multiply: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) * toNumber(rValue));
+      else
+        pushOperand(0.0);
+    }
+    case Instruction::Divide: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNumber(lValue) && isNumber(rValue) && toNumber(rValue) == 0)
+        pushOperand(0.0);
+      else if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) / toNumber(rValue));
+      else
+        pushOperand(0.0);
+      break;
+    }
     case Instruction::PushNull: {
       pushOperand(nullptr);
       break;
