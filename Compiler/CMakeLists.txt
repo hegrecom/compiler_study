@@ -21,4 +21,5 @@ add_executable(
   DataType.cpp
   Instruction.cpp
   Code.cpp
-  Generator.cpp)
+  Generator.cpp
+  Machine.cpp)
