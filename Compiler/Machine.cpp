@@ -81,6 +81,24 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       cout << endl;
       break;
     }
+    case Instruction::LogicalOr: {
+      auto value = popOperand();
+      if (isTrue(value)) {
+        pushOperand(value);
+        callStack.back().instructionPointer = toSize(code.operand);
+        continue;
+      }
+      break;
+    }
+    case Instruction::LogicalAnd: {
+      auto value = popOperand();
+      if (isFalse(value)) {
+        pushOperand(value);
+        callStack.back().instructionPointer = toSize(code.operand);
+        continue;
+      }
+      break;
+    }
     case Instruction::Add: {
       auto rValue = popOperand();
       auto lValue = popOperand();
