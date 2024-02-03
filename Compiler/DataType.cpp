@@ -35,51 +35,43 @@ auto toBuiltinFunction(any value) -> function<any(vector<any>)> {
   return any_cast<function<any(vector<any>)>>(value);
 }
 
-auto isArray(any value) -> bool {
-  return value.type() == typeid(shared_ptr<vector<any>>);
-}
+auto isArray(any value) -> bool { return value.type() == typeid(Array *); }
 
-auto toArray(any value) -> shared_ptr<vector<any>> {
-  return any_cast<shared_ptr<vector<any>>>(value);
-}
+auto toArray(any value) -> Array * { return any_cast<Array *>(value); }
 
 auto getValueOfArray(any object, any index) -> any {
   auto i = static_cast<int>(toNumber(index));
-  if (i >= 0 && i < toArray(object)->size())
-    return toArray(object)->at(i);
+  if (i >= 0 && i < toArray(object)->values.size())
+    return toArray(object)->values.at(i);
 
   return nullptr;
 }
 
 auto setValueOfArray(any object, any index, any value) -> any {
   auto i = static_cast<int>(toNumber(index));
-  if (i >= 0 && i < toArray(object)->size())
-    toArray(object)->at(i) = value;
+  if (i >= 0 && i < toArray(object)->values.size())
+    toArray(object)->values.at(i) = value;
 
   return value;
 }
 
-auto isMap(any value) -> bool {
-  return value.type() == typeid(shared_ptr<map<string, any>>);
-}
+auto isMap(any value) -> bool { return value.type() == typeid(Map *); }
 
-auto toMap(any value) -> shared_ptr<map<string, any>> {
-  return any_cast<shared_ptr<map<string, any>>>(value);
-}
+auto toMap(any value) -> Map * { return any_cast<Map *>(value); }
 
 auto isSize(any value) -> bool { return value.type() == typeid(size_t); }
 
 auto toSize(any value) -> size_t { return any_cast<size_t>(value); }
 
 auto getValueOfMap(any object, string key) -> any {
-  if (toMap(object)->count(key))
-    return toMap(object)->at(key);
+  if (toMap(object)->values.count(key))
+    return toMap(object)->values.at(key);
 
   return nullptr;
 }
 
 auto setValueOfMap(any object, string key, any value) -> any {
-  (*toMap(object))[key] = value;
+  toMap(object)->values[key] = value;
   return value;
 }
 
@@ -96,16 +88,16 @@ auto operator<<(ostream &stream, any &value) -> ostream & {
   }
   if (isArray(value)) {
     stream << "[ ";
-    auto temp = toArray(value);
-    for (auto &element : *temp) {
+    auto temp = toArray(value)->values;
+    for (auto element : temp) {
       stream << element << " ";
     }
     stream << "]";
   }
   if (isMap(value)) {
     stream << "{ ";
-    auto temp = toMap(value);
-    for (auto &element : *temp) {
+    auto temp = toMap(value)->values;
+    for (auto element : temp) {
       stream << element.first << ": " << element.second << " ";
     }
     stream << "}";

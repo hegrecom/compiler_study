@@ -4,15 +4,26 @@
 #include <any>
 #include <functional>
 #include <iomanip>
-#include <memory>
 #include <ostream>
 
 using std::any;
 using std::function;
 using std::ostream;
-using std::shared_ptr;
 using std::string;
 using std::vector;
+
+struct Object {
+  bool isMarked = false;
+  virtual ~Object() {}
+};
+
+struct Array : Object {
+  vector<any> values;
+};
+
+struct Map : Object {
+  map<string, any> values;
+};
 
 auto isString(any value) -> bool;
 
@@ -40,7 +51,7 @@ auto toBuiltinFunction(any value) -> function<any(vector<any>)>;
 
 auto isArray(any value) -> bool;
 
-auto toArray(any value) -> shared_ptr<vector<any>>;
+auto toArray(any value) -> Array *;
 
 auto getValueOfArray(any object, any index) -> any;
 
@@ -48,7 +59,7 @@ auto setValueOfArray(any object, any index, any value) -> any;
 
 auto isMap(any value) -> bool;
 
-auto toMap(any value) -> shared_ptr<map<string, any>>;
+auto toMap(any value) -> Map *;
 
 auto isSize(any value) -> bool;
 

@@ -204,6 +204,26 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       pushOperand(code.operand);
       break;
     }
+    case Instruction::PushArray: {
+      auto result = new Array();
+      auto size = toSize(code.operand);
+      for (auto i = size; i > 0; i--) {
+        result->values.push_back(popOperand());
+      }
+      pushOperand(result);
+      break;
+    }
+    case Instruction::PushMap: {
+      auto result = new Map();
+      auto size = toSize(code.operand);
+      for (auto i = size; i > 0; i--) {
+        auto value = popOperand();
+        auto key = toString(popOperand());
+        result->values[toString(key)] = value;
+      }
+      pushOperand(result);
+      break;
+    }
     }
     callStack.back().instructionPointer++;
   }
