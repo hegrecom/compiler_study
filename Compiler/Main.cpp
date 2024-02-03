@@ -106,6 +106,8 @@ auto main() -> int {
             printLine map['first'];
             printLine map['third'];
             printLine map;
+            print 'BuiltInFunction: sqrt(16) = ';
+            printLine sqrt(16);
 
 
             return 3 + 4;

@@ -20,7 +20,7 @@ struct StackFrame {
 
 static vector<StackFrame> callStack;
 static map<string, any> global;
-extern map<string, function<any(vector<any>)>> builtInFunctionTable;
+extern map<string, function<any(vector<any>)>> builtinFunctionTable;
 
 static auto pushOperand(any) -> void;
 static auto popOperand() -> any;
@@ -179,8 +179,8 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       auto name = toString(code.operand);
       if (functionTable.count(name))
         pushOperand(functionTable[name]);
-      else if (builtInFunctionTable.count(name))
-        pushOperand(builtInFunctionTable[name]);
+      else if (builtinFunctionTable.count(name))
+        pushOperand(builtinFunctionTable[name]);
       else if (global.count(name))
         pushOperand(global[name]);
       else
