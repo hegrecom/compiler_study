@@ -219,7 +219,7 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       for (auto i = size; i > 0; i--) {
         auto value = popOperand();
         auto key = toString(popOperand());
-        result->values[toString(key)] = value;
+        result->values[key] = value;
       }
       pushOperand(result);
       break;

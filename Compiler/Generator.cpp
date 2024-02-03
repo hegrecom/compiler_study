@@ -297,4 +297,5 @@ auto MapLiteral::generate() -> void {
     writeCode(Instruction::PushString, key);
     value->generate();
   }
+  writeCode(Instruction::PushMap, values.size());
 }
