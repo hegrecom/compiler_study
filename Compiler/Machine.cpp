@@ -62,6 +62,14 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       callStack.pop_back();
       return;
     }
+    case Instruction::Return: {
+      any result = nullptr;
+      if (callStack.back().operandStack.empty() == false)
+        result = callStack.back().operandStack.back();
+      callStack.pop_back();
+      callStack.back().operandStack.push_back(result);
+      break;
+    }
     case Instruction::Print: {
       for (auto i = 0; i < toSize(code.operand); i++) {
         auto value = popOperand();
