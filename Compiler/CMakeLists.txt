@@ -22,4 +22,5 @@ add_executable(
   Instruction.cpp
   Code.cpp
   Generator.cpp
+  BuiltInFunction.cpp
   Machine.cpp)

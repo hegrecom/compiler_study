@@ -3,11 +3,13 @@
 #include "Instruction.h"
 #include "Kind.h"
 #include <any>
+#include <functional>
 #include <iostream>
 
 using std::any;
 using std::cout;
 using std::endl;
+using std::function;
 using std::get;
 
 struct StackFrame {
@@ -18,6 +20,7 @@ struct StackFrame {
 
 static vector<StackFrame> callStack;
 static map<string, any> global;
+extern map<string, function<any(vector<any>)>> builtInFunctionTable;
 
 static auto pushOperand(any) -> void;
 static auto popOperand() -> any;
@@ -45,9 +48,16 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         }
         callStack.push_back(stackFrame);
         continue;
-      } else {
-        pushOperand(nullptr);
       }
+      if (isBuiltinFunction(operand)) {
+        vector<any> arguments;
+        for (auto i = 0; i < toSize(code.operand); i++) {
+          arguments.push_back(popOperand());
+          pushOperand(toBuiltinFunction(operand)(arguments));
+          break;
+        }
+      }
+      pushOperand(nullptr);
       break;
     }
     case Instruction::Alloca: {
@@ -169,6 +179,8 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
       auto name = toString(code.operand);
       if (functionTable.count(name))
         pushOperand(functionTable[name]);
+      else if (builtInFunctionTable.count(name))
+        pushOperand(builtInFunctionTable[name]);
       else if (global.count(name))
         pushOperand(global[name]);
       else
