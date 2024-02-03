@@ -3,6 +3,8 @@
 
 using std::any_cast;
 
+auto isNull(any value) -> bool { return value.type() == typeid(nullptr); }
+
 auto isString(any value) -> bool { return value.type() == typeid(string); }
 
 auto toString(any value) -> string { return any_cast<string>(value); }

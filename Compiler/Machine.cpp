@@ -167,6 +167,72 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         pushOperand(0.0);
       break;
     }
+    case Instruction::Equal: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNull(lValue) && isNull(rValue))
+        pushOperand(true);
+      else if (isBoolean(lValue) && isBoolean(rValue))
+        pushOperand(toBoolean(lValue) == toBoolean(rValue));
+      else if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) == toNumber(rValue));
+      else if (isString(lValue) && isString(rValue))
+        pushOperand(toString(lValue) == toString(rValue));
+      else
+        pushOperand(false);
+      break;
+    }
+    case Instruction::NotEqual: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNull(lValue) && isNull(rValue))
+        pushOperand(false);
+      else if (isBoolean(lValue) && isBoolean(rValue))
+        pushOperand(toBoolean(lValue) != toBoolean(rValue));
+      else if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) != toNumber(rValue));
+      else if (isString(lValue) && isString(rValue))
+        pushOperand(toString(lValue) != toString(rValue));
+      else
+        pushOperand(false);
+      break;
+    }
+    case Instruction::LessThan: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) < toNumber(rValue));
+      else
+        pushOperand(false);
+      break;
+    }
+    case Instruction::GreaterThan: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) > toNumber(rValue));
+      else
+        pushOperand(false);
+      break;
+    }
+    case Instruction::LessOrEqual: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) <= toNumber(rValue));
+      else
+        pushOperand(false);
+      break;
+    }
+    case Instruction::GreaterOrEqual: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(toNumber(lValue) >= toNumber(rValue));
+      else
+        pushOperand(false);
+      break;
+    }
     case Instruction::GetElement: {
       auto index = popOperand();
       auto object = popOperand();

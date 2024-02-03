@@ -25,6 +25,8 @@ struct Map : Object {
   map<string, any> values;
 };
 
+auto isNull(any value) -> bool;
+
 auto isString(any value) -> bool;
 
 auto toString(any value) -> string;
