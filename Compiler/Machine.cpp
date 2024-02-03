@@ -53,9 +53,9 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         vector<any> arguments;
         for (auto i = 0; i < toSize(code.operand); i++) {
           arguments.push_back(popOperand());
-          pushOperand(toBuiltinFunction(operand)(arguments));
-          break;
         }
+        pushOperand(toBuiltinFunction(operand)(arguments));
+        break;
       }
       pushOperand(nullptr);
       break;
