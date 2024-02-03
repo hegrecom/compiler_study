@@ -63,15 +63,15 @@ auto isSize(any value) -> bool { return value.type() == typeid(size_t); }
 
 auto toSize(any value) -> size_t { return any_cast<size_t>(value); }
 
-auto getValueOfMap(any object, string key) -> any {
-  if (toMap(object)->values.count(key))
-    return toMap(object)->values.at(key);
+auto getValueOfMap(any object, any key) -> any {
+  if (toMap(object)->values.count(toString(key)))
+    return toMap(object)->values.at(toString(key));
 
   return nullptr;
 }
 
-auto setValueOfMap(any object, string key, any value) -> any {
-  toMap(object)->values[key] = value;
+auto setValueOfMap(any object, any key, any value) -> any {
+  toMap(object)->values[toString(key)] = value;
   return value;
 }
 

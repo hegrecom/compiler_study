@@ -65,8 +65,8 @@ auto isSize(any value) -> bool;
 
 auto toSize(any value) -> size_t;
 
-auto getValueOfMap(any object, string key) -> any;
+auto getValueOfMap(any object, any key) -> any;
 
-auto setValueOfMap(any object, string key, any value) -> any;
+auto setValueOfMap(any object, any key, any value) -> any;
 
 auto operator<<(ostream &stream, any &value) -> ostream &;

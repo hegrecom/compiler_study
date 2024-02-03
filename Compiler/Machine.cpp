@@ -167,6 +167,26 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         pushOperand(0.0);
       break;
     }
+    case Instruction::GetElement: {
+      auto index = popOperand();
+      auto object = popOperand();
+      if (isArray(object) && isNumber(index))
+        pushOperand(getValueOfArray(object, index));
+      else if (isMap(object) && isString(index))
+        pushOperand(getValueOfMap(object, index));
+      else
+        pushOperand(nullptr);
+      break;
+    }
+    case Instruction::SetElement: {
+      auto index = popOperand();
+      auto object = popOperand();
+      if (isArray(object) && isNumber(index))
+        setValueOfArray(object, index, peekOperand());
+      else if (isMap(object) && isString(index))
+        setValueOfMap(object, index, peekOperand());
+      break;
+    }
     case Instruction::GetLocal: {
       auto index = toSize(code.operand);
       pushOperand(callStack.back().variables[index]);
