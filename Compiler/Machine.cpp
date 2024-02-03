@@ -5,12 +5,14 @@
 #include <any>
 #include <functional>
 #include <iostream>
+#include <list>
 
 using std::any;
 using std::cout;
 using std::endl;
 using std::function;
 using std::get;
+using std::list;
 
 struct StackFrame {
   vector<any> variables;
@@ -21,10 +23,14 @@ struct StackFrame {
 static vector<StackFrame> callStack;
 static map<string, any> global;
 extern map<string, function<any(vector<any>)>> builtinFunctionTable;
+static list<Object *> objects;
 
 static auto pushOperand(any) -> void;
 static auto popOperand() -> any;
 static auto peekOperand() -> any;
+static auto markObject(any) -> void;
+static auto collectGarbage() -> void;
+static auto sweepObject() -> void;
 
 auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
   callStack.emplace_back();
@@ -72,6 +78,7 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         result = callStack.back().operandStack.back();
       callStack.pop_back();
       callStack.back().operandStack.push_back(result);
+      collectGarbage();
       break;
     }
     case Instruction::Jump: {
@@ -313,6 +320,7 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         result->values.push_back(popOperand());
       }
       pushOperand(result);
+      objects.push_back(result);
       break;
     }
     case Instruction::PushMap: {
@@ -324,6 +332,7 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         result->values[key] = value;
       }
       pushOperand(result);
+      objects.push_back(result);
       break;
     }
     case Instruction::PopOperand: {
@@ -347,4 +356,47 @@ static auto popOperand() -> any {
 
 static auto peekOperand() -> any {
   return callStack.back().operandStack.back();
+}
+
+static auto markObject(any object) -> void {
+  if (isArray(object)) {
+    if (toArray(object)->isMarked)
+      return;
+    toArray(object)->isMarked = true;
+    for (auto &value : toArray(object)->values)
+      markObject(value);
+  } else if (isMap(object)) {
+    if (toMap(object)->isMarked)
+      return;
+    toMap(object)->isMarked = true;
+    for (auto [key, value] : toMap(object)->values) {
+      markObject(value);
+    }
+  }
+}
+
+static auto collectGarbage() -> void {
+  for (auto &stackFrame : callStack) {
+    for (auto &variable : stackFrame.variables) {
+      markObject(variable);
+    }
+    for (auto &value : stackFrame.operandStack) {
+      markObject(value);
+    }
+  }
+  for (auto &[key, value] : global) {
+    markObject(value);
+  }
+  sweepObject();
+}
+
+static auto sweepObject() -> void {
+  objects.remove_if([](Object *object) {
+    if (object->isMarked) {
+      object->isMarked = false;
+      return false;
+    }
+    delete object;
+    return true;
+  });
 }
