@@ -138,6 +138,16 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
         pushOperand(0.0);
       break;
     }
+    case Instruction::Modulo: {
+      auto rValue = popOperand();
+      auto lValue = popOperand();
+      if (isNumber(lValue) && isNumber(rValue) && toNumber(rValue) == 0)
+        pushOperand(0.0);
+      else if (isNumber(lValue) && isNumber(rValue))
+        pushOperand(fmod(toNumber(lValue), toNumber(rValue)));
+      else
+        pushOperand(0.0);
+    }
     case Instruction::PushNull: {
       pushOperand(nullptr);
       break;
