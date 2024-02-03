@@ -1,9 +1,9 @@
 #include "Machine.h"
+#include "Instruction.h"
 #include <any>
-#include <vector>
 
 using std::any;
-using std::vector;
+using std::get;
 
 struct StackFrame {
   vector<any> variables;
@@ -13,6 +13,17 @@ struct StackFrame {
 
 static vector<StackFrame> callStack;
 
-auto execute(vector<Code>, vector<Code>, vector<Code> objectCode) -> void {
+auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
   callStack.emplace_back();
+  auto codeList = get<0>(objectCode);
+  auto functionTable = get<1>(objectCode);
+  while (true) {
+    auto code = codeList[callStack.back().instructionPointer];
+    switch (code.instruction) {
+    case Instruction::Exit:
+      callStack.pop_back();
+      return;
+    }
+    callStack.back().instructionPointer++;
+  }
 }
