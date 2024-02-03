@@ -50,6 +50,10 @@ auto isMap(any value) -> bool;
 
 auto toMap(any value) -> shared_ptr<map<string, any>>;
 
+auto isSize(any value) -> bool;
+
+auto toSize(any value) -> size_t;
+
 auto getValueOfMap(any object, string key) -> any;
 
 auto setValueOfMap(any object, string key, any value) -> any;

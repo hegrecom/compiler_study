@@ -67,6 +67,10 @@ auto toMap(any value) -> shared_ptr<map<string, any>> {
   return any_cast<shared_ptr<map<string, any>>>(value);
 }
 
+auto isSize(any value) -> bool { return value.type() == typeid(size_t); }
+
+auto toSize(any value) -> size_t { return any_cast<size_t>(value); }
+
 auto getValueOfMap(any object, string key) -> any {
   if (toMap(object)->count(key))
     return toMap(object)->at(key);

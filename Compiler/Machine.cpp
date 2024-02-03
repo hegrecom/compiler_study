@@ -1,4 +1,5 @@
 #include "Machine.h"
+#include "DataType.h"
 #include "Instruction.h"
 #include "Kind.h"
 #include <any>
@@ -15,6 +16,7 @@ struct StackFrame {
 static vector<StackFrame> callStack;
 
 static auto pushOperand(any) -> void;
+static auto popOperand() -> any;
 
 auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
   callStack.emplace_back();
@@ -24,6 +26,19 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
     auto code = codeList[callStack.back().instructionPointer];
     switch (code.instruction) {
     case Instruction::Call: {
+      auto operand = popOperand();
+      if (isSize(operand)) {
+        StackFrame stackFrame;
+        stackFrame.instructionPointer = toSize(operand);
+        for (auto i = 0; i < toSize(code.operand); i++) {
+          stackFrame.variables.push_back(callStack.back().operandStack.back());
+          callStack.back().operandStack.pop_back();
+        }
+        callStack.push_back(stackFrame);
+        continue;
+      } else {
+        pushOperand(nullptr);
+      }
       break;
     }
     case Instruction::GetGlobal: {
@@ -45,4 +60,10 @@ auto execute(tuple<vector<Code>, map<string, size_t>> objectCode) -> void {
 
 static auto pushOperand(any operand) -> void {
   callStack.back().operandStack.push_back(operand);
+}
+
+static auto popOperand() -> any {
+  auto value = callStack.back().operandStack.back();
+  callStack.back().operandStack.pop_back();
+  return value;
 }
